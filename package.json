@@ -2,6 +2,7 @@
     "name": "be-code-ascend",
     "version": "1.0.0",
     "description": "",
+    "main": "index.js",
     "type": "module",
     "scripts": {
         "make": "node src/cli/make.js",
@@ -35,6 +36,7 @@
     "license": "ISC",
     "packageManager": "pnpm@10.6.5",
     "dependencies": {
+        "@babel/runtime": "^7.27.1",
         "@prisma/client": "^6.8.2",
         "bcrypt": "^6.0.0",
         "cookie-parser": "^1.4.7",
