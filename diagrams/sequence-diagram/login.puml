@@ -1,0 +1,27 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "AuthenticationController" as Controller
+participant "Validation" as Validation
+participant "AuthenticationService" as Service
+participant "AuthenticationRepository" as Repository
+
+User -> Router: POST /auth/login
+Router -> Controller: login(req, res, next)
+Controller -> Validation: validate(LOGIN, req.body)
+Validation --> Controller: data
+Controller -> Service: login_with_username/data OR login_with_email/data
+alt User not found
+    Service -> Controller: throw error (404)
+    Controller -> next: error
+else Account deleted
+    Service -> Controller: throw error (403)
+    Controller -> next: error
+else Wrong password
+    Service -> Controller: throw error (401)
+    Controller -> next: error
+else Success
+    Service -> Controller: user
+    Controller -> res: status(200).json({ token })
+end
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+start
+:User lihat leaderboard;
+:POST /leaderboard;
+:Verifikasi token;
+:Ambil data leaderboard;
+:Kirim leaderboard;
+stop
+@enduml

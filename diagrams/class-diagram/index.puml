@@ -1,0 +1,122 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho
+skinparam nodesep 100
+skinparam ranksep 100
+
+' ENUMS
+enum Role {
+  user
+  contributor
+  admin
+  superadmin
+}
+
+enum Level {
+  beginner
+  intermediate
+  advanced
+}
+
+' USER
+class User {
+  id: String
+  full_name: String
+  username: String
+  email: String
+  password: String
+  role: Role
+  point: Int
+  experience: Int
+  created_at: DateTime
+  updated_at: DateTime
+  deleted_at: DateTime?
+}
+
+' MODULE
+class Module {
+  id: String
+  title: String
+  description: String
+  level: Level
+  points_required: Int
+  creator_id: String
+  is_free: Boolean
+  is_published: Boolean
+  created_at: DateTime
+  updated_at: DateTime
+  is_deleted: Boolean
+}
+
+' CHAPTER
+class Chapter {
+  id: String
+  module_id: String
+  creator_id: String
+  title: String
+  content: String
+  with_question: Boolean
+  question: String?
+  answer_1: String?
+  answer_2: String?
+  answer_3: String?
+  correct_answer: String?
+  point_earned: Int
+  exp_earned: Int
+  is_published: Boolean
+  created_at: DateTime
+  updated_at: DateTime
+  is_deleted: Boolean
+}
+
+' ENROLLMENT
+class Enrollment {
+  id: String
+  user_id: String
+  module_id: String
+  created_at: DateTime
+}
+
+' CHAPTER PROGRESS
+class ChapterProgress {
+  id: String
+  user_id: String
+  chapter_id: String
+  created_at: DateTime
+}
+
+' QUIZ ATTEMPT
+class QuizAttempt {
+  id: String
+  user_id: String
+  chapter_id: String
+  created_at: DateTime
+}
+
+' RELATIONS
+User "1" -- "0..*" Module : created_modules
+User "1" -- "0..*" Chapter : created_chapters
+User "1" -- "0..*" Enrollment : enrolled_modules
+User "1" -- "0..*" ChapterProgress : chapter_progress
+User "1" -- "0..*" QuizAttempt : quiz_attempts
+
+Module "1" -- "0..*" Chapter : chapters
+Module "1" -- "0..*" Enrollment : enrollments
+Module "1" -- "1" User : creator
+
+Chapter "1" -- "0..*" ChapterProgress : chapter_progress
+Chapter "1" -- "0..*" QuizAttempt : quiz_attempts
+Chapter "1" -- "1" Module : module
+Chapter "1" -- "1" User : creator
+
+Enrollment "1" -- "1" User : user
+Enrollment "1" -- "1" Module : module
+
+ChapterProgress "1" -- "1" User : user
+ChapterProgress "1" -- "1" Chapter : chapter
+
+QuizAttempt "1" -- "1" User : user
+QuizAttempt "1" -- "1" Chapter : chapter
+
+@enduml

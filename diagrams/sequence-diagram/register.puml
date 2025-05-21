@@ -1,0 +1,25 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "AuthenticationController" as Controller
+participant "Validation" as Validation
+participant "AuthenticationService" as Service
+participant "AuthenticationRepository" as Repository
+
+User -> Router: POST /auth/register
+Router -> Controller: register(req, res, next)
+Controller -> Validation: validate(REGISTER, req.body)
+Validation --> Controller: data
+Controller -> Service: register(data)
+Service -> Repository: find_email(data.email)
+Service -> Repository: find_username(data.username)
+alt Username/email exists
+    Service -> Controller: throw error (409)
+    Controller -> next: error
+else Valid
+    Service -> Repository: register(data)
+    Repository --> Service: newUser
+    Service --> Controller: newUser
+    Controller -> res: status(201).json({ ... })
+end
+@enduml

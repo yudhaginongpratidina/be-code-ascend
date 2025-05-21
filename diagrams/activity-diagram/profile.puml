@@ -1,0 +1,26 @@
+@startuml
+
+|Lihat Profil|
+start
+:User memilih lihat profil;
+:GET /account;
+:Verifikasi token;
+:Ambil data profil;
+:Kirim data profil;
+stop
+
+|Update Profil|
+start
+:User memilih update profil;
+:PATCH /account;
+:Verifikasi token;
+:Validasi data;
+if (Valid?) then (ya)
+  :Update profil;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+@enduml

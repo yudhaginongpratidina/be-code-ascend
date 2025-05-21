@@ -1,0 +1,67 @@
+@startuml
+
+|Tambah Chapter|
+start
+:User memilih tambah chapter;
+:POST /chapters;
+:Verifikasi token;
+:Cek role (contributor/admin/superadmin);
+if (Valid?) then (ya)
+  :Simpan chapter baru;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Update Chapter|
+start
+:User memilih update chapter;
+:PATCH /chapters;
+:Verifikasi token;
+:Cek role (contributor/admin/superadmin);
+if (Valid?) then (ya)
+  :Update data chapter;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Restore Chapter|
+start
+:User memilih restore chapter;
+:PATCH /chapters/:id;
+:Verifikasi token;
+:Cek role (contributor/admin/superadmin);
+if (Valid?) then (ya)
+  :Restore chapter;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Hapus Chapter|
+start
+:User memilih hapus chapter;
+:DELETE /chapters/:id;
+:Verifikasi token;
+:Cek role (contributor/admin/superadmin);
+if (Valid?) then (ya)
+  :Hapus chapter;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Cari Chapter|
+start
+:User memilih cari chapter;
+:POST /chapters/search;
+:Cari chapter sesuai parameter;
+:Kirim hasil pencarian;
+stop
+
+@enduml

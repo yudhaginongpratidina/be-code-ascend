@@ -1,0 +1,31 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "ChapterProgressController" as Controller
+participant "VerifyToken" as VerifyToken
+participant "ChapterProgressService" as Service
+participant "ChapterProgressRepository" as Repository
+
+== Store Chapter Progress ==
+User -> Router: POST /chapter-progress
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> Controller: store(req, res, next)
+Controller -> Service: storeProgress(userId, data)
+Service -> Repository: store(userId, data)
+Repository --> Service: progress
+Service --> Controller: progress
+Controller -> User: status(201).json({ progress })
+
+== Find Chapters By Module Is Completed ==
+User -> Router: POST /chapter-progress/find-chapters
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> Controller: findChapterByModuleIsCompleted(req, res, next)
+Controller -> Service: findChaptersByModuleIsCompleted(userId, data)
+Service -> Repository: findChaptersByModuleIsCompleted(userId, data)
+Repository --> Service: chapters
+Service --> Controller: chapters
+Controller -> User: status(200).json({ chapters })
+
+@enduml

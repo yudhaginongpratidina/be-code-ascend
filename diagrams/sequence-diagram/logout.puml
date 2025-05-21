@@ -1,0 +1,13 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "AuthenticationController" as Controller
+
+User -> Router: GET /auth/logout
+Router -> Controller: logout(req, res, next)
+alt Success
+    Controller -> res: status(200).json({ message })
+else Error
+    Controller -> next: error
+end
+@enduml

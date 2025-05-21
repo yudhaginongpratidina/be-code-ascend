@@ -1,0 +1,197 @@
+// -------------------------------------------------------------------------------
+// Generator
+// -------------------------------------------------------------------------------
+generator client {
+    provider = "prisma-client-js"
+    output   = "../generated/prisma"
+}
+
+// -------------------------------------------------------------------------------
+// Source Database
+// -------------------------------------------------------------------------------
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+// -------------------------------------------------------------------------------
+// Role User
+// -------------------------------------------------------------------------------
+enum Role {
+    user
+    contributor
+    admin
+    superadmin
+}
+
+// -------------------------------------------------------------------------------
+// Level
+// -------------------------------------------------------------------------------
+enum Level {
+    beginner
+    intermediate
+    advanced
+}
+
+// -------------------------------------------------------------------------------
+// Model User
+// -------------------------------------------------------------------------------
+// Menyimpan data semua pengguna platform
+// Informasi dasar: nama, username, email, password, dsb
+// Memiliki role: user biasa, contributor, admin, atau superadmin
+// Mencatat kapan akun dibuat dan diperbarui
+// -------------------------------------------------------------------------------
+model User {
+    id         String    @id @default(cuid())
+    full_name  String
+    username   String    @unique
+    email      String    @unique
+    password   String
+    role       Role      @default(user)
+    point      Int       @default(0)
+    experience Int       @default(0)
+    created_at DateTime  @default(now())
+    updated_at DateTime  @updatedAt
+    deleted_at DateTime?
+
+    // relasi ke tabel module
+    created_modules Module[] @relation("ModuleCreator")
+
+    // relasi ke tabel chapter
+    created_chapters Chapter[] @relation("ChapterCreator")
+
+    // relasi ke tabel enrollment
+    enrolled_modules Enrollment[] @relation("EnrollmentUser")
+
+    // relasi ke tabel chapter progress
+    chapter_progress ChapterProgress[]
+
+    // relasi ke quiz attemp
+    quiz_attempts QuizAttempt[]
+}
+
+// -------------------------------------------------------------------------------
+// Model Module
+// -------------------------------------------------------------------------------
+// Menyimpan data modul yang telah dibuat oleh user (contributor / admin / superadmin)
+// -------------------------------------------------------------------------------
+model Module {
+    id              String   @id @default(cuid())
+    title           String
+    description     String   @db.Text
+    level           Level
+    points_required Int      @default(0)
+    creator_id      String
+    is_free         Boolean  @default(false)
+    is_published    Boolean  @default(false)
+    created_at      DateTime @default(now())
+    updated_at      DateTime @updatedAt
+    is_deleted      Boolean  @default(false)
+
+    // relasi ke user
+    creator User @relation("ModuleCreator", fields: [creator_id], references: [id])
+
+    // relasi ke chapter
+    chapters Chapter[] @relation("ChapterModule")
+
+    // relasi ke enrollment
+    enrollments Enrollment[] @relation("EnrollmentModule")
+}
+
+// -------------------------------------------------------------------------------
+// Model Chapter
+// -------------------------------------------------------------------------------
+// Menyimpan data chapter yang telah dibuat oleh user (contributor / admin / superadmin)
+// -------------------------------------------------------------------------------
+model Chapter {
+    id             String    @id @default(cuid())
+    module_id      String
+    creator_id     String
+    title          String
+    content        String    @db.Text
+    with_question  Boolean   @default(false)
+    question       String?   @db.Text
+    answer_1       String?   @db.Text
+    answer_2       String?   @db.Text
+    answer_3       String?   @db.Text
+    correct_answer String?   @db.Text
+    point_earned   Int       @default(0)
+    exp_earned     Int       @default(0)
+    is_published   Boolean   @default(false)
+    created_at     DateTime  @default(now())
+    updated_at     DateTime  @updatedAt
+    is_deleted     Boolean   @default(false)
+
+    // relasi ke module
+    module Module @relation("ChapterModule", fields: [module_id], references: [id])
+
+    // relasi ke user
+    creator User @relation("ChapterCreator", fields: [creator_id], references: [id])
+
+    // relasi ke chapter progress
+    chapter_progress ChapterProgress[]
+
+    // relasi ke quiz attempt
+    quiz_attempts QuizAttempt[]
+}
+
+// -------------------------------------------------------------------------------
+// Model Enrollment
+// -------------------------------------------------------------------------------
+// Menyimpan data enrollment yang telah dibuat oleh user
+// -------------------------------------------------------------------------------
+model Enrollment {
+    id          String   @id @default(cuid())
+    user_id     String
+    module_id   String
+    created_at  DateTime @default(now())
+
+    // relasi ke user
+    user User @relation("EnrollmentUser", fields: [user_id], references: [id])
+
+    // relasi ke module
+    module Module @relation("EnrollmentModule", fields: [module_id], references: [id])
+
+    // relasi unique
+    @@unique([user_id, module_id])
+}
+
+// -------------------------------------------------------------------------------
+// Model ChapterProgress
+// -------------------------------------------------------------------------------
+// Mencatat kemajuan belajar pengguna untuk setiap chapter
+// -------------------------------------------------------------------------------
+model ChapterProgress {
+    id             String    @id @default(cuid())
+    user_id        String
+    chapter_id     String
+    created_at     DateTime  @default(now())
+    
+    // relasi ke user
+    user           User      @relation(fields: [user_id], references: [id])
+    // relasi ke chapter
+    chapter        Chapter   @relation(fields: [chapter_id], references: [id])
+    
+    // Memastikan setiap user hanya memiliki satu progress untuk setiap chapter
+    @@unique([user_id, chapter_id])
+}
+
+// -------------------------------------------------------------------------------
+// Model QuizAttempt
+// -------------------------------------------------------------------------------
+// Mencatat percobaan user dalam menjawab quiz
+// -------------------------------------------------------------------------------
+model QuizAttempt {
+    id             String    @id @default(cuid())
+    user_id        String
+    chapter_id     String
+    created_at     DateTime  @default(now())
+    
+    // relasi ke user
+    user           User      @relation(fields: [user_id], references: [id])
+    // relasi ke chapter
+    chapter        Chapter   @relation(fields: [chapter_id], references: [id])
+    
+    // Memastikan setiap user hanya memiliki satu catatan attempt untuk setiap chapter
+    @@unique([user_id, chapter_id])
+}

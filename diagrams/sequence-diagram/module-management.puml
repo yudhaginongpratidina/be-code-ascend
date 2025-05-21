@@ -1,0 +1,71 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "ModuleManagementController" as Controller
+participant "VerifyToken" as VerifyToken
+participant "RolePermission" as RolePermission
+participant "ModuleManagementService" as Service
+participant "ModuleManagementRepository" as Repository
+
+== Create Module ==
+User -> Router: POST /modules
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> RolePermission: check(["contributor", "admin", "superadmin"])
+RolePermission --> Router: next()
+Router -> Controller: store(req, res, next)
+Controller -> Service: createModule(data)
+Service -> Repository: store(data)
+Repository --> Service: newModule
+Service --> Controller: newModule
+Controller -> User: status(201).json({ newModule })
+
+== Update Module ==
+User -> Router: PATCH /modules
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> RolePermission: check(["contributor", "admin", "superadmin"])
+RolePermission --> Router: next()
+Router -> Controller: update(req, res, next)
+Controller -> Service: updateModule(data)
+Service -> Repository: update(data)
+Repository --> Service: updatedModule
+Service --> Controller: updatedModule
+Controller -> User: status(200).json({ updatedModule })
+
+== Restore Module ==
+User -> Router: PATCH /modules/:id
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> RolePermission: check(["contributor", "admin", "superadmin"])
+RolePermission --> Router: next()
+Router -> Controller: restore(req, res, next)
+Controller -> Service: restoreModule(id)
+Service -> Repository: restore(id)
+Repository --> Service: restoredModule
+Service --> Controller: restoredModule
+Controller -> User: status(200).json({ restoredModule })
+
+== Delete Module ==
+User -> Router: DELETE /modules/:id
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> RolePermission: check(["contributor", "admin", "superadmin"])
+RolePermission --> Router: next()
+Router -> Controller: destroy(req, res, next)
+Controller -> Service: deleteModule(id)
+Service -> Repository: destroy(id)
+Repository --> Service: deletedModule
+Service --> Controller: deletedModule
+Controller -> User: status(200).json({ deletedModule })
+
+== Search/List Modules ==
+User -> Router: POST /modules/search
+Router -> Controller: index(req, res, next)
+Controller -> Service: searchModules(data)
+Service -> Repository: find(data)
+Repository --> Service: modules
+Service --> Controller: modules
+Controller -> User: status(200).json({ modules })
+
+@enduml

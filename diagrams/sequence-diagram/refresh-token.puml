@@ -1,0 +1,13 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "AuthenticationController" as Controller
+
+User -> Router: GET /auth/token
+Router -> Controller: refresh_token(req, res, next)
+alt Success
+    Controller -> res: status(200).json({ token })
+else Error
+    Controller -> next: error
+end
+@enduml

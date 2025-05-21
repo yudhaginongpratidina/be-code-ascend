@@ -1,0 +1,51 @@
+@startuml
+' Mengatur agar diagram horizontal
+
+|Register|
+start
+:User memilih Register;
+:Kirim data ke /auth/register;
+:Validasi data;
+if (Valid?) then (ya)
+  :Buat akun;
+  :Kirim sukses;
+else (tidak)
+  :Kirim error;
+endif
+stop
+
+|Login|
+start
+:User memilih Login;
+:Kirim data ke /auth/login;
+:Validasi kredensial;
+if (Valid?) then (ya)
+  :Generate token;
+  :Kirim token;
+else (tidak)
+  :Kirim error;
+endif
+stop
+
+|Refresh Token|
+start
+:User mengirim refresh token;
+:Kirim ke /auth/token;
+:Validasi refresh token;
+if (Valid?) then (ya)
+  :Generate token baru;
+  :Kirim token baru;
+else (tidak)
+  :Kirim error;
+endif
+stop
+
+|Logout|
+start
+:User memilih Logout;
+:Kirim ke /auth/logout;
+:Proses logout;
+:Kirim sukses;
+stop
+
+@enduml

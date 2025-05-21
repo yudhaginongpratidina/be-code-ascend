@@ -1,0 +1,42 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "EnrollmentManagementController" as Controller
+participant "VerifyToken" as VerifyToken
+participant "EnrollmentManagementService" as Service
+participant "EnrollmentManagementRepository" as Repository
+
+== Get All Enrollments ==
+User -> Router: GET /enrollments
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> Controller: index(req, res, next)
+Controller -> Service: getAllEnrollments(userId)
+Service -> Repository: findAll(userId)
+Repository --> Service: enrollments
+Service --> Controller: enrollments
+Controller -> User: status(200).json({ enrollments })
+
+== Get Enrollment By Id ==
+User -> Router: GET /enrollments/:id
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> Controller: show(req, res, next)
+Controller -> Service: getEnrollmentById(userId, id)
+Service -> Repository: findById(userId, id)
+Repository --> Service: enrollment
+Service --> Controller: enrollment
+Controller -> User: status(200).json({ enrollment })
+
+== Create Enrollment ==
+User -> Router: POST /enrollments
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> Controller: store(req, res, next)
+Controller -> Service: createEnrollment(userId, data)
+Service -> Repository: store(userId, data)
+Repository --> Service: newEnrollment
+Service --> Controller: newEnrollment
+Controller -> User: status(201).json({ newEnrollment })
+
+@enduml

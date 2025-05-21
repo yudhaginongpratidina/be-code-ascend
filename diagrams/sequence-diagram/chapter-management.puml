@@ -1,0 +1,71 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "ChapterManagementController" as Controller
+participant "VerifyToken" as VerifyToken
+participant "RolePermission" as RolePermission
+participant "ChapterManagementService" as Service
+participant "ChapterManagementRepository" as Repository
+
+== Create Chapter ==
+User -> Router: POST /chapters
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> RolePermission: check(["contributor", "admin", "superadmin"])
+RolePermission --> Router: next()
+Router -> Controller: store(req, res, next)
+Controller -> Service: createChapter(data)
+Service -> Repository: store(data)
+Repository --> Service: newChapter
+Service --> Controller: newChapter
+Controller -> User: status(201).json({ newChapter })
+
+== Update Chapter ==
+User -> Router: PATCH /chapters
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> RolePermission: check(["contributor", "admin", "superadmin"])
+RolePermission --> Router: next()
+Router -> Controller: update(req, res, next)
+Controller -> Service: updateChapter(data)
+Service -> Repository: update(data)
+Repository --> Service: updatedChapter
+Service --> Controller: updatedChapter
+Controller -> User: status(200).json({ updatedChapter })
+
+== Restore Chapter ==
+User -> Router: PATCH /chapters/:id
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> RolePermission: check(["contributor", "admin", "superadmin"])
+RolePermission --> Router: next()
+Router -> Controller: restore(req, res, next)
+Controller -> Service: restoreChapter(id)
+Service -> Repository: restore(id)
+Repository --> Service: restoredChapter
+Service --> Controller: restoredChapter
+Controller -> User: status(200).json({ restoredChapter })
+
+== Delete Chapter ==
+User -> Router: DELETE /chapters/:id
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> RolePermission: check(["contributor", "admin", "superadmin"])
+RolePermission --> Router: next()
+Router -> Controller: destroy(req, res, next)
+Controller -> Service: deleteChapter(id)
+Service -> Repository: destroy(id)
+Repository --> Service: deletedChapter
+Service --> Controller: deletedChapter
+Controller -> User: status(200).json({ deletedChapter })
+
+== Search/List Chapters ==
+User -> Router: POST /chapters/search
+Router -> Controller: index(req, res, next)
+Controller -> Service: searchChapters(data)
+Service -> Repository: find(data)
+Repository --> Service: chapters
+Service --> Controller: chapters
+Controller -> User: status(200).json({ chapters })
+
+@enduml

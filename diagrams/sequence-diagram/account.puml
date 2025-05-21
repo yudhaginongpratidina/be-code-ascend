@@ -1,0 +1,31 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "AccountController" as Controller
+participant "VerifyToken" as VerifyToken
+participant "AccountService" as Service
+participant "AccountRepository" as Repository
+
+== Get Account ==
+User -> Router: GET /account
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> Controller: index(req, res, next)
+Controller -> Service: getAccount(userId)
+Service -> Repository: findById(userId)
+Repository --> Service: account
+Service --> Controller: account
+Controller -> User: status(200).json({ account })
+
+== Update Account ==
+User -> Router: PATCH /account
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> Controller: update(req, res, next)
+Controller -> Service: updateAccount(userId, data)
+Service -> Repository: update(userId, data)
+Repository --> Service: updatedAccount
+Service --> Controller: updatedAccount
+Controller -> User: status(200).json({ updatedAccount })
+
+@enduml

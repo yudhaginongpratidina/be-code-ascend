@@ -1,0 +1,40 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "UserManagementController" as Controller
+participant "Validation" as Validation
+participant "UserManagementService" as Service
+participant "UserManagementRepository" as Repository
+
+== Get All Users ==
+User -> Router: GET /users
+Router -> Controller: index(req, res, next)
+Controller -> Service: getAllUsers()
+Service -> Repository: findAll()
+Repository --> Service: users
+Service --> Controller: users
+Controller -> User: status(200).json({ users })
+
+== Update User ==
+User -> Router: PATCH /users
+Router -> Controller: update(req, res, next)
+Controller -> Validation: validate(UPDATE, req.body)
+Validation --> Controller: data
+Controller -> Service: updateUser(data)
+Service -> Repository: update(data)
+Repository --> Service: updatedUser
+Service --> Controller: updatedUser
+Controller -> User: status(200).json({ updatedUser })
+
+== Search User ==
+User -> Router: POST /users/search
+Router -> Controller: show(req, res, next)
+Controller -> Validation: validate(SEARCH, req.body)
+Validation --> Controller: data
+Controller -> Service: searchUser(data)
+Service -> Repository: findByCriteria(data)
+Repository --> Service: user
+Service --> Controller: user
+Controller -> User: status(200).json({ user })
+
+@enduml

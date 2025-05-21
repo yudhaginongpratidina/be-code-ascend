@@ -1,0 +1,33 @@
+@startuml
+
+|Ambil Daftar User|
+start
+:User memilih ambil daftar user;
+:GET /users;
+:Ambil data user;
+:Kirim daftar user;
+stop
+
+|Update User|
+start
+:User memilih update user;
+:PATCH /users;
+:Verifikasi token;
+:Cek role superadmin;
+if (Valid?) then (ya)
+  :Update data user;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Cari User|
+start
+:User memilih cari user;
+:POST /users/search;
+:Cari user sesuai parameter;
+:Kirim hasil pencarian;
+stop
+
+@enduml

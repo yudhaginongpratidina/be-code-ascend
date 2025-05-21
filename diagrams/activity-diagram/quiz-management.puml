@@ -1,0 +1,26 @@
+@startuml
+
+|Submit Quiz Attempt|
+start
+:User memilih submit quiz attempt;
+:POST /quiz-attempt;
+:Verifikasi token;
+:Validasi data;
+if (Valid?) then (ya)
+  :Simpan attempt;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Cari Quiz Attempt|
+start
+:User memilih cari quiz attempt;
+:POST /quiz-attempt/find;
+:Verifikasi token;
+:Cari attempt;
+:Kirim hasil;
+stop
+
+@enduml

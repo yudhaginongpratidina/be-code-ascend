@@ -1,0 +1,67 @@
+@startuml
+
+|Tambah Modul|
+start
+:User memilih tambah modul;
+:POST /modules;
+:Verifikasi token;
+:Cek role (contributor/admin/superadmin);
+if (Valid?) then (ya)
+  :Simpan modul baru;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Update Modul|
+start
+:User memilih update modul;
+:PATCH /modules;
+:Verifikasi token;
+:Cek role (contributor/admin/superadmin);
+if (Valid?) then (ya)
+  :Update data modul;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Restore Modul|
+start
+:User memilih restore modul;
+:PATCH /modules/:id;
+:Verifikasi token;
+:Cek role (contributor/admin/superadmin);
+if (Valid?) then (ya)
+  :Restore modul;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Hapus Modul|
+start
+:User memilih hapus modul;
+:DELETE /modules/:id;
+:Verifikasi token;
+:Cek role (contributor/admin/superadmin);
+if (Valid?) then (ya)
+  :Hapus modul;
+  :Kirim sukses;
+else (tidak)
+  :Kirim gagal;
+endif
+stop
+
+|Cari Modul|
+start
+:User memilih cari modul;
+:POST /modules/search;
+:Cari modul sesuai parameter;
+:Kirim hasil pencarian;
+stop
+
+@enduml

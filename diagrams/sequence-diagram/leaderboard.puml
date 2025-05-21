@@ -1,0 +1,20 @@
+@startuml
+actor User
+participant "Express Router" as Router
+participant "LeaderboardController" as Controller
+participant "VerifyToken" as VerifyToken
+participant "LeaderboardService" as Service
+participant "LeaderboardRepository" as Repository
+
+== Get Leaderboard ==
+User -> Router: POST /leaderboard
+Router -> VerifyToken: verify(req, res, next)
+VerifyToken --> Router: next()
+Router -> Controller: index(req, res, next)
+Controller -> Service: getLeaderboard(data)
+Service -> Repository: find(data)
+Repository --> Service: leaderboard
+Service --> Controller: leaderboard
+Controller -> User: status(200).json({ leaderboard })
+
+@enduml
