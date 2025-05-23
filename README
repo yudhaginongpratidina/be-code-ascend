@@ -1,8 +1,8 @@
 # BE CODE ASCEND
 
 ```bash
-git clone https://github.com/yudhaginongpratidina/fe-code-ascend.git
-cd fe-code-ascend
+git clone https://github.com/yudhaginongpratidina/be-code-ascend.git
+cd be-code-ascend
 
 pnpm install
 pnpm run dev
