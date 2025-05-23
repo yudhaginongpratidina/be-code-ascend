@@ -1,0 +1,23 @@
+# BE CODE ASCEND
+
+```bash
+git clone https://github.com/yudhaginongpratidina/fe-code-ascend.git
+cd fe-code-ascend
+
+pnpm install
+pnpm run dev
+```
+
+or with docker
+
+```bash
+git clone https://github.com/yudhaginongpratidina/be-code-ascend.git
+cd be-code-ascend
+docker build -t express/be-code-ascend:1.0.0 .
+docker run -d --name be-code-ascend -p 4000:4000 express/be-code-ascend:1.0.0
+````
+
+## Note
+
+Jangan lupa atur environtment variable untuk nextjs terlebih dahulu
+sebelum menjalankan perintah di atas

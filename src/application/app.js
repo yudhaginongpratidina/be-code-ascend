@@ -26,7 +26,7 @@ const app = express();
 // middlewares - app
 // --------------------------------------------------------------------------------
 const allowedOrigins = [
-    'http://localhost:3000',
+    'http://localhost:5000',
 ];
 app.use(cors({
     origin: (origin, callback) => {
