@@ -13,7 +13,6 @@ COPY . .
 
 # Sekarang jalankan prisma generate, karena schema.prisma sudah ada di container
 RUN pnpm prisma generate
-RUN pnpm prisma db push
 
 EXPOSE 4000
 
