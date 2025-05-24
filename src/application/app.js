@@ -26,7 +26,8 @@ const app = express();
 // middlewares - app
 // --------------------------------------------------------------------------------
 const allowedOrigins = [
-    'http://localhost:5000',
+    'http://103.87.67.120:5000',
+    'https://ascend.zeroaeon.site'
 ];
 app.use(cors({
     origin: (origin, callback) => {
