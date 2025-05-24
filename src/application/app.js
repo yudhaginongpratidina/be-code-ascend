@@ -4,6 +4,7 @@
 import cors from 'cors';
 import express from "express";
 import cookieParser from 'cookie-parser';
+import 'dotenv/config';
 
 // --------------------------------------------------------------------------------
 // dependencies - routes
@@ -25,10 +26,7 @@ const app = express();
 // --------------------------------------------------------------------------------
 // middlewares - app
 // --------------------------------------------------------------------------------
-const allowedOrigins = [
-    'http://103.87.67.120:5000',
-    'https://ascend.zeroaeon.site'
-];
+const allowedOrigins = process.env.EXPRESS_CORS_ORIGIN?.split(',') || [];
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
