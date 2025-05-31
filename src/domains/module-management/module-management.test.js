@@ -43,7 +43,6 @@ describe("ModuleManagementController", () => {
         await prismaClient.$disconnect();
     });
 
-    let cookie = "";
     let token = "";
 
     let module_id = "";
@@ -65,15 +64,11 @@ describe("ModuleManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("should return a 201 status code when create new module successfully", async () => {
             const response = await request(api).post('/modules')
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     title: "module test",
@@ -93,7 +88,6 @@ describe("ModuleManagementController", () => {
 
         it("should return a 409 status code when create new module failed because user already created the module", async () => {
             const response = await request(api).post('/modules')
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     title: "module test",
@@ -107,7 +101,6 @@ describe("ModuleManagementController", () => {
         Array.from({ length: 10 }).forEach((_, i) => {
             it(`(${i + 1}) should return a 201 status code when create new other module successfully`, async () => {
                 const response = await request(api).post('/modules')
-                    .set("Cookie", cookie)
                     .set("Authorization", `Bearer ${token}`)
                     .send({
                         title: `module test ${i + 1}`,
@@ -131,15 +124,12 @@ describe("ModuleManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
 
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("should return a 403 status code when create new module successfully but user role not access", async () => {
             const response = await request(api).post('/modules')
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     title: "module test 1",
@@ -149,7 +139,7 @@ describe("ModuleManagementController", () => {
             expect(response.status).toBe(403);
         });
     });
-    
+
     describe("test update module (only creator this module", () => {
         it("should return a 200 status code when login", async () => {
             const login = await request(api).post('/auth/login').send({
@@ -161,24 +151,20 @@ describe("ModuleManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("should return a 200 status code when update module successfully", async () => {
             const response = await request(api).patch(`/modules`)
-            .set("Cookie", cookie)
-            .set("Authorization", `Bearer ${token}`)
-            .send({
-                module_id: module_id, // Ensure this ID exists
-                title: "module test update",
-                description: "module test update description",
-                level: "intermediate",
-                is_free: true,
-                is_published: true,
-            });
+                .set("Authorization", `Bearer ${token}`)
+                .send({
+                    module_id: module_id, // Ensure this ID exists
+                    title: "module test update",
+                    description: "module test update description",
+                    level: "intermediate",
+                    is_free: true,
+                    is_published: true,
+                });
 
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("module updated successfully");
@@ -204,15 +190,11 @@ describe("ModuleManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("should return a 200 status code when update module successfully", async () => {
             const response = await request(api).patch(`/modules`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -282,7 +264,7 @@ describe("ModuleManagementController", () => {
 
         it("should return a 200 status code when search by me module successfully", async () => {
             const response = await request(api).post('/modules/search')
-                .set("Cookie", cookie)
+                .set("Authorization", `Bearer ${token}`)
                 .send({
                     type: "search_by_me"
                 })
@@ -301,15 +283,11 @@ describe("ModuleManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("should return a 200 status code when delete module successfully", async () => {
             const response = await request(api).delete(`/modules/${module_id}`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("module deleted successfully");
@@ -323,7 +301,6 @@ describe("ModuleManagementController", () => {
 
         it("should return a 200 status code when delete module successfully", async () => {
             const response = await request(api).patch(`/modules/${module_id}`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("module restored successfully");
