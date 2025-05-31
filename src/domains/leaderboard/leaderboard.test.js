@@ -49,7 +49,6 @@ describe("LeaderboardController", () => {
         await prismaClient.$disconnect();
     });
 
-    let cookie = "";
     let token = "";
 
 
@@ -65,15 +64,11 @@ describe("LeaderboardController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("should return leaderboard", async () => {
             const response = await request(api).post("/leaderboard")
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({ type: "search_all" });
             expect(response.status).toBe(200);
@@ -82,7 +77,6 @@ describe("LeaderboardController", () => {
 
         it("should return leaderboard by me", async () => {
             const response = await request(api).post("/leaderboard")
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({ type: "search_by_me" });
             expect(response.status).toBe(200);

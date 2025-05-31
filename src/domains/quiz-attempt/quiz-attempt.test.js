@@ -45,7 +45,6 @@ describe("QuizAttemptController", () => {
         await prismaClient.$disconnect();
     });
 
-    let cookie = "";
     let token = "";
     let module_id = "";
     let chapter_id_no_quiz = "";
@@ -62,15 +61,11 @@ describe("QuizAttemptController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("01.02 - create module", async () => {
             const response = await request(api).post('/modules')
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     title: "module test",
@@ -86,7 +81,6 @@ describe("QuizAttemptController", () => {
 
         it("01.03 - update module (free and published)", async () => {
             const response = await request(api).patch(`/modules`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -103,7 +97,6 @@ describe("QuizAttemptController", () => {
 
         it("01.04 - create chapter (no question)", async () => {
             const response = await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -120,8 +113,7 @@ describe("QuizAttemptController", () => {
         })
 
         it("01.05 - create chapter (with question)", async () => {
-            const response =await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
+            const response = await request(api).post(`/chapters`)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -154,15 +146,11 @@ describe("QuizAttemptController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("02.02 - enroll module", async () => {
             const response = await request(api).post(`/enrollments`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -173,7 +161,6 @@ describe("QuizAttemptController", () => {
 
         it("02.03 - attempt chapter-progress", async () => {
             const response = await request(api).post(`/chapter-progress`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -185,7 +172,6 @@ describe("QuizAttemptController", () => {
 
         it("02.03 - attempt chapter-progress failed, because the quiz hasn't been answered yet", async () => {
             const response = await request(api).post(`/chapter-progress`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -197,7 +183,6 @@ describe("QuizAttemptController", () => {
 
         it("02.04.01 - attempt quiz failed, because wrong answer", async () => {
             const response = await request(api).post(`/quiz-attempt`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -210,7 +195,6 @@ describe("QuizAttemptController", () => {
 
         it("02.04.02 - attempt quiz successfully", async () => {
             const response = await request(api).post(`/quiz-attempt`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -223,7 +207,6 @@ describe("QuizAttemptController", () => {
 
         it("02.04.03 - attempt quiz failed, because you have already done this quiz", async () => {
             const response = await request(api).post(`/quiz-attempt`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -236,7 +219,6 @@ describe("QuizAttemptController", () => {
 
         it("02.05 - find attempt quiz", async () => {
             const response = await request(api).post(`/quiz-attempt/find`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     chapter_id: chapter_id_with_quiz

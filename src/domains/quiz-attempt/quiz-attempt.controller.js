@@ -7,10 +7,11 @@ export default class QuizAttemptController {
 
     static async findAttemptQuiz(req, res, next) {
         try {
-            const refresh_token = req.cookies.refresh_token;
-            if (!refresh_token) return res.status(401).json({ message: "user not logged in" });
+            const authHeader = req.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
+            if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
             const user_id = decoded.id;
 
             const data = await Validation.validate(QuizAttemptValidation.FIND, req.body);
@@ -26,10 +27,11 @@ export default class QuizAttemptController {
 
     static async store(req, res, next) {
         try {
-            const refresh_token = req.cookies.refresh_token;
-            if (!refresh_token) return res.status(401).json({ message: "user not logged in" });
+            const authHeader = req.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
+            if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
             const user_id = decoded.id;
 
             const data = await Validation.validate(QuizAttemptValidation.CREATE, req.body);

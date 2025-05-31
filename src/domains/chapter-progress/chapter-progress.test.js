@@ -45,7 +45,6 @@ describe("ChapterProgressController", () => {
         await prismaClient.$disconnect();
     });
 
-    let cookie = "";
     let token = "";
     let module_id = "";
     let chapter_id_no_quiz = "";
@@ -61,15 +60,11 @@ describe("ChapterProgressController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("01.02 - create module", async () => {
             const response = await request(api).post('/modules')
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     title: "module test",
@@ -85,7 +80,6 @@ describe("ChapterProgressController", () => {
 
         it("01.03 - update module (free and published)", async () => {
             const response = await request(api).patch(`/modules`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -102,7 +96,6 @@ describe("ChapterProgressController", () => {
 
         it("01.04 - create chapter (no question)", async () => {
             const response = await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -130,15 +123,11 @@ describe("ChapterProgressController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("02.02 - enroll module", async () => {
             const response = await request(api).post(`/enrollments`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -149,7 +138,6 @@ describe("ChapterProgressController", () => {
 
         it("02.03 - attempt chapter-progress", async () => {
             const response = await request(api).post(`/chapter-progress`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -161,7 +149,6 @@ describe("ChapterProgressController", () => {
 
         it("02.04 - attempt chapter-progress, because the chapter has already been completed", async () => {
             const response = await request(api).post(`/chapter-progress`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -173,7 +160,6 @@ describe("ChapterProgressController", () => {
 
         it("02.05 - find chapter by module is completed", async () => {
             const response = await request(api).post(`/chapter-progress/find-chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
