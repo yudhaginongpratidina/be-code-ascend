@@ -7,10 +7,11 @@ import jwt from "jsonwebtoken";
 export default class EnrollmentManagementController {
     static async index(req, res, next) {
         try {
-            const refresh_token = req.cookies.refresh_token;
-            if (!refresh_token) return res.status(401).json({ message: "user not logged in" });
+            const authHeader = req.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
+            if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
             const user_id = decoded.id;
 
             const response = await EnrollmentManagementService.find_enrollment_by_me(user_id);
@@ -40,10 +41,11 @@ export default class EnrollmentManagementController {
 
     static async store(req, res, next) {
         try {
-            const refresh_token = req.cookies.refresh_token;
-            if (!refresh_token) return res.status(401).json({ message: "user not logged in" });
+            const authHeader = req.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
+            if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
             const user_id = decoded.id;
             const data = await Validation.validate(EnrollmentManagementValidation.ENROLL_MODULE, req.body);
             const response = await EnrollmentManagementService.enroll_module(user_id, data.module_id);
@@ -70,10 +72,11 @@ export default class EnrollmentManagementController {
     static async show(req, res, next) {
         try {
             const { id } = req.params;
-            const refresh_token = req.cookies.refresh_token;
-            if (!refresh_token) return res.status(401).json({ message: "user not logged in" });
+            const authHeader = req.headers['authorization'];
+            const token = authHeader && authHeader.split(' ')[1];
+            if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
             const user_id = decoded.id;
             const response = await EnrollmentManagementService.find_detail_enrollment(user_id, id);
             res.status(200).json({

@@ -53,7 +53,6 @@ describe("EnrollmentManagementController", () => {
         await prismaClient.$disconnect();
     });
 
-    let cookie = "";
     let token = "";
     let module_id = "";
     let module_id_2 = "";
@@ -69,15 +68,11 @@ describe("EnrollmentManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("scenario 02 - should return a 201 status code when create new module successfully", async () => {
             const response = await request(api).post('/modules')
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     title: "module test",
@@ -97,7 +92,6 @@ describe("EnrollmentManagementController", () => {
 
         it("scenario 03 - should return a 200 status code whne update module successfully (free and published)", async () => {
             const response = await request(api).patch(`/modules`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -124,10 +118,7 @@ describe("EnrollmentManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("scenario 02 - should return a 200 status code when search all module successfully", async () => {
@@ -152,7 +143,6 @@ describe("EnrollmentManagementController", () => {
 
         it("scenario 04 - should return a 201 status code when enroll module successfully", async () => {
             const response = await request(api).post(`/enrollments`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -171,7 +161,6 @@ describe("EnrollmentManagementController", () => {
 
         it("scenario 05 - should return a 409 status code when user already enrolled module", async () => {
             const response = await request(api).post(`/enrollments`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -193,15 +182,11 @@ describe("EnrollmentManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("scenario 02 - should return a 201 status code when create new module successfully", async () => {
             const response = await request(api).post('/modules')
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     title: "module test 2",
@@ -221,7 +206,6 @@ describe("EnrollmentManagementController", () => {
 
         it("scenario 03 - should return a 200 status code whne update module successfully (free and published)", async () => {
             const response = await request(api).patch(`/modules`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id_2,
@@ -238,7 +222,6 @@ describe("EnrollmentManagementController", () => {
 
         it("should return a 201 status code when create new chapter (no question) successfully", async () => {
             const response = await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id_2,
@@ -268,12 +251,10 @@ describe("EnrollmentManagementController", () => {
             const cookies = login.headers["set-cookie"];
 
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("scenario 02 - should return a 201 status code when enroll module successfully", async () => {
             const response = await request(api).post(`/enrollments`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id_2,
@@ -295,15 +276,11 @@ describe("EnrollmentManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("scenario 02 - should return a 400 status code when enroll module failed but point not fulfilled", async () => {
             const response = await request(api).post(`/enrollments`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id_2,
@@ -324,15 +301,11 @@ describe("EnrollmentManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("scenario 02 - should return a 200 status code when get list module enrolled successfully", async () => {
             const response = await request(api).get(`/enrollments`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
             expect(response.status).toBe(200);
             expect(response.body.data[0].id).toBeDefined();
@@ -350,15 +323,11 @@ describe("EnrollmentManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("scenario 02 - should return a 200 status code when get detail module successfully", async () => {
             const response = await request(api).get('/enrollments/' + module_id_2)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
             expect(response.status).toBe(200);
             expect(response.body.data.id).toBeDefined();
