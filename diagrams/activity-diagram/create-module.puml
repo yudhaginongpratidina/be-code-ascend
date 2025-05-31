@@ -1,0 +1,35 @@
+@startuml
+start
+
+:VerifyToken;
+:RolePermission(["contributor", "admin", "superadmin"]);
+
+:Ambil creator_id dan data dari request;
+:UserRepository.find_by_id(creator_id);
+
+if (User ditemukan?) then (Ya)
+    :ModuleManagementRepository.find_by_title(data.title);
+    if (Module dengan judul sama sudah ada?) then (Ya)
+        :Throw ResponseError(409, "module already exists");
+        stop
+    else (Tidak)
+        :Set default level (beginner/intermediate/advanced);
+        :Set base points dan xp;
+        :ModuleManagementRepository.create_module({
+            creator_id, 
+            title, 
+            description, 
+            level, 
+            base_points, 
+            base_xp, 
+            is_published
+        });
+        :Return module baru;
+        stop
+    endif
+else (Tidak)
+    :Throw ResponseError(404, "user not found");
+    stop
+endif
+
+@enduml

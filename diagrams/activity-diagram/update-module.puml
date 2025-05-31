@@ -1,0 +1,33 @@
+@startuml
+start
+
+:VerifyToken;
+:RolePermission(["contributor", "admin", "superadmin"]);
+
+:Ambil user_id dan data dari request;
+:UserRepository.find_by_id(user_id);
+
+if (User ditemukan?) then (Ya)
+    :ModuleManagementRepository.find_by("id", data.id);
+    if (Module ditemukan?) then (Ya)
+        if (data.title diubah?) then (Ya)
+            :ModuleManagementRepository.find_by_title(data.title);
+            if (Module dengan judul baru sudah ada?) then (Ya)
+                :Throw ResponseError(409, "module with this title already exists");
+                stop
+            endif
+        endif
+        :Update data module (title, description, level, is_published, dll);
+        :ModuleManagementRepository.update_module_by_id(data.id, data);
+        :Return updated module;
+        stop
+    else (Tidak)
+        :Throw ResponseError(404, "module not found");
+        stop
+    endif
+else (Tidak)
+    :Throw ResponseError(404, "user not found");
+    stop
+endif
+
+@enduml

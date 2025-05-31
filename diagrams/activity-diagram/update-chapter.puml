@@ -1,0 +1,47 @@
+@startuml
+start
+
+:VerifyToken;
+:Check role ("contributor", "admin", "superadmin");
+:Ambil creator_id dan data dari request;
+
+:Cek user by ID;
+if (User ditemukan?) then (Ya)
+  :Cek module by ID;
+  if (Module ditemukan?) then (Ya)
+    :Cek chapter by ID & creator_id;
+    if (Chapter ditemukan?) then (Ya)
+      if (Bukan creator?) then (Ya)
+        :Throw 403 "not the creator";
+        stop
+      endif
+
+      if (Judul diubah?) then (Ya)
+        :Cek judul sudah ada di module?;
+        if (Sudah ada?) then (Ya)
+          :Throw 409 "title exists";
+          stop
+        endif
+      endif
+
+      :Hitung earnPoints & XP;
+      :Update chapter;
+      :Hitung jumlah chapter;
+      :Hitung ulang points_required;
+      :Update points_required module;
+      :Return updated;
+      stop
+    else (Tidak)
+      :Throw 404 "chapter not found";
+      stop
+    endif
+  else (Tidak)
+    :Throw 404 "module not found";
+    stop
+  endif
+else (Tidak)
+  :Throw 404 "user not found";
+  stop
+endif
+
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+start
+
+:VerifyToken;
+:Check role ("contributor", "admin", "superadmin");
+:Ambil creator_id dan data dari request;
+
+:UserRepository.find_by_id(creator_id);
+if (User ditemukan?) then (Ya)
+  :ModuleManagementRepository.find_by_id(data.module_id);
+  if (Module ditemukan?) then (Ya)
+    :ChapterManagementRepository.find_by_module_id_and_title(...);
+    if (Chapter sudah ada?) then (Ya)
+      :Throw 409 "chapter already exists";
+      stop
+    else (Tidak)
+      :Hitung earnPoints dan earnXP;
+      :ChapterManagementRepository.create_chapter(...);
+      :count_chapters_by_module(...);
+      :Hitung points_required;
+      :update_points_required_module(...);
+      :Return create_chapter;
+      stop
+    endif
+  else (Tidak)
+    :Throw 404 "module not found";
+    stop
+  endif
+else (Tidak)
+  :Throw 404 "user not found";
+  stop
+endif
+
+@enduml

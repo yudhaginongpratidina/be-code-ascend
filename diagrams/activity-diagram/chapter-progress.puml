@@ -1,26 +1,39 @@
 @startuml
-
-|Submit Chapter Progress|
 start
-:User memilih submit chapter progress;
-:POST /chapter-progress;
-:Verifikasi token;
-:Validasi data;
-if (Valid?) then (ya)
-  :Simpan progress;
-  :Kirim sukses;
-else (tidak)
-  :Kirim gagal;
+
+:VerifyToken;
+:RolePermission(["user", "contributor", "admin", "superadmin"]);
+
+:Ambil user_id dan chapter_id dari request;
+:UserRepository.find_by_id(user_id);
+
+if (User ditemukan?) then (Ya)
+    :ChapterManagementRepository.find_by("id", chapter_id);
+    if (Chapter ditemukan?) then (Ya)
+        :EnrollmentRepository.find_by_user_and_module(user_id, chapter.module_id);
+        if (User sudah enroll modul?) then (Ya)
+            :ChapterProgressRepository.find_by_user_and_chapter(user_id, chapter_id);
+            if (Progress sudah ada?) then (Ya)
+                :Return progress;
+                stop
+            else (Tidak)
+                :ChapterProgressRepository.create_progress(user_id, chapter_id);
+                :Ambil exp_earned dari chapter;
+                :UserRepository.update_xp(user_id, exp_earned);
+                :Return new progress dan XP yang didapat;
+                stop
+            endif
+        else (Tidak)
+            :Throw ResponseError(403, "User not enrolled in this module");
+            stop
+        endif
+    else (Tidak)
+        :Throw ResponseError(404, "Chapter not found");
+        stop
+    endif
+else (Tidak)
+    :Throw ResponseError(404, "User not found");
+    stop
 endif
-stop
-
-|Cari Chapter Selesai|
-start
-:User memilih cari chapter selesai;
-:POST /chapter-progress/find-chapters;
-:Verifikasi token;
-:Cari chapter selesai;
-:Kirim hasil;
-stop
 
 @enduml

@@ -1,0 +1,41 @@
+@startuml
+start
+
+:VerifyToken;
+:RolePermission(["user", "contributor", "admin", "superadmin"]);
+
+:Ambil user_id dan module_id dari request;
+:UserRepository.find_by_id(user_id);
+
+if (User ditemukan?) then (Ya)
+    :ModuleManagementRepository.find_by("id", module_id);
+    if (Module ditemukan?) then (Ya)
+        :EnrollmentRepository.find_by_user_and_module(user_id, module_id);
+        if (Sudah terdaftar?) then (Ya)
+            :Throw ResponseError(409, "User already enrolled in this module");
+            stop
+        else (Tidak)
+            :Cek apakah modul membutuhkan poin?;
+            if (Ya) then (Ya)
+                :Cek poin user;
+                if (Poin cukup?) then (Ya)
+                    :Kurangi poin user;
+                else (Tidak)
+                    :Throw ResponseError(402, "Insufficient points");
+                    stop
+                endif
+            endif
+            :EnrollmentRepository.create_enrollment(user_id, module_id);
+            :Return enrollment sukses;
+            stop
+        endif
+    else (Tidak)
+        :Throw ResponseError(404, "Module not found");
+        stop
+    endif
+else (Tidak)
+    :Throw ResponseError(404, "User not found");
+    stop
+endif
+
+@enduml

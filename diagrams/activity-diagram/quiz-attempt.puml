@@ -1,0 +1,65 @@
+@startuml
+skinparam dpi 150
+skinparam defaultFontSize 16
+
+start
+
+:Verify Token;
+:Role Permission (["user", "contributor", "admin", "superadmin"]);
+
+:Ambil user_id, chapter_id, dan jawaban dari request;
+
+:UserRepository.find_by_id(user_id);
+if (User ditemukan?) then (Ya)
+
+  :ChapterManagementRepository.find_by("id", chapter_id);
+  if (Chapter ditemukan?) then (Ya)
+
+    if (Chapter punya quiz?) then (Ya)
+
+      :EnrollmentRepository.find_by_user_and_module(user_id, chapter.module_id);
+      if (User sudah enroll modul?) then (Ya)
+
+        :QuizAttemptRepository.find_by_user_and_chapter(user_id, chapter_id);
+        if (Sudah pernah attempt?) then (Ya)
+          :Return data attempt sebelumnya;
+          stop
+        else (Tidak)
+
+          :Cek jawaban user dengan correct_answer;
+          if (Jawaban benar?) then (Ya)
+            :Set score = 100;
+            :Ambil exp_earned dan point_earned dari chapter;
+            :UserRepository.update_xp(user_id, exp_earned);
+            :UserRepository.update_point(user_id, point_earned);
+          else (Tidak)
+            :Set score = 0;
+          endif
+
+          :QuizAttemptRepository.create_attempt(user_id, chapter_id, jawaban, score);
+          :Return hasil attempt (score, XP/poin jika benar);
+          stop
+
+        endif
+
+      else (Tidak)
+        :Error 403: User not enrolled in module;
+        stop
+      endif
+
+    else (Tidak)
+      :Error 404: No quiz in this chapter;
+      stop
+    endif
+
+  else (Tidak)
+    :Error 404: Chapter not found;
+    stop
+  endif
+
+else (Tidak)
+  :Error 404: User not found;
+  stop
+endif
+
+@enduml
