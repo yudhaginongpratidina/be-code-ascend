@@ -29,7 +29,6 @@ describe("ChapterManagementController", () => {
         await prismaClient.$disconnect();
     });
 
-    let cookie = "";
     let token = "";
     let module_id = "";
     let chapter_id = "";
@@ -45,15 +44,11 @@ describe("ChapterManagementController", () => {
             expect(login.body.message).toBe("user logged in successfully");
             expect(login.body.data.token).toBeDefined();
 
-            const cookies = login.headers["set-cookie"];
-
             token = login.body.data.token;
-            cookie = cookies;
         });
 
         it("should return a 201 status code when create new module successfully", async () => {
             const response = await request(api).post('/modules')
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     title: "module test 1",
@@ -68,7 +63,6 @@ describe("ChapterManagementController", () => {
 
         it("should return a 201 status code when create new chapter (no question) successfully", async () => {
             const response = await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -86,7 +80,6 @@ describe("ChapterManagementController", () => {
 
         it("should return a 409 status code when create new chapter (no question) but chpater already exist", async () => {
             const response = await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -101,7 +94,6 @@ describe("ChapterManagementController", () => {
 
         it("should return a 201 status code when create new chapter (with question) successfully", async () => {
             const response = await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -122,7 +114,6 @@ describe("ChapterManagementController", () => {
 
         it("should return status code 400 when creating a new chapter (with questions) but there are duplicate answers", async () => {
             const response = await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -149,7 +140,6 @@ describe("ChapterManagementController", () => {
 
         it("should return status code 400 when creating a new chapter (with questions) but the correct answer does not match the answer in the options", async () => {
             const response = await request(api).post(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -173,7 +163,6 @@ describe("ChapterManagementController", () => {
     describe("test update cahpter (access only contributor, admin and superadmin) and he is the author this chapter", () => {
         it("should return a 200 status code when update chapter successfully", async () => {
             const response = await request(api).patch(`/chapters`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     id: chapter_id,
@@ -201,7 +190,7 @@ describe("ChapterManagementController", () => {
 
         it("should return a 200 status code when search chapters by id", async () => {
             const response = await request(api).post('/chapters/search')
-                .set("Cookie", cookie)
+                .set("Authorization", `Bearer ${token}`)
                 .send({
                     type: "search_by_id_only_by_creator_id",
                     value: chapter_id
@@ -214,7 +203,6 @@ describe("ChapterManagementController", () => {
     describe("test delete chapter (access only contributor, admin and superadmin) and he is the author this chapter", () => {
         it("should return a 200 status code when delete chapter successfully", async () => {
             const response = await request(api).delete(`/chapters/${chapter_id}`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`);
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("chapter deleted successfully");
@@ -224,7 +212,6 @@ describe("ChapterManagementController", () => {
     describe("test update level module (access only contributor, admin and superadmin) and he is the author this module", () => {
         it("should return a 200 status code when update module successfully", async () => {
             const response = await request(api).patch(`/modules`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`)
                 .send({
                     module_id: module_id,
@@ -247,7 +234,6 @@ describe("ChapterManagementController", () => {
     describe("test restore chapter (access only contributor, admin and superadmin) and he is the author this chapter", () => {
         it("should return a 200 status code when restore chapter successfully", async () => {
             const response = await request(api).patch(`/chapters/${chapter_id}`)
-                .set("Cookie", cookie)
                 .set("Authorization", `Bearer ${token}`);
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("chapter restored successfully");
