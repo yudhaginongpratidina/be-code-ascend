@@ -44,13 +44,13 @@ export default class AuthenticationController {
             const role = response.role;
 
             const access_token = jwt.sign({ id, role, username }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN });
-            const refresh_token = jwt.sign({ id, role, username }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN });
-
-            res.cookie("refresh_token", refresh_token, { httpOnly: true, secure: true, sameSite: "None", maxAge: 24 * 60 * 60 * 1000, partitioned: true });
+            // const refresh_token = jwt.sign({ id, role, username }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN });
 
             res.status(200).json({
                 message: "user logged in successfully",
-                data: { token: access_token }
+                data: { 
+                    token: access_token
+                }
             });
         } catch (e) {
             next(e);

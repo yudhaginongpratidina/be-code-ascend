@@ -32,8 +32,8 @@ const api = express.Router();
 // --------------------------------------------------------------------------------
 api.post("/auth/register", AuthenticationController.register);
 api.post("/auth/login", AuthenticationController.login);
-api.get("/auth/token", AuthenticationController.refresh_token);
-api.get("/auth/logout", AuthenticationController.logout);
+// api.get("/auth/token", AuthenticationController.refresh_token);
+// api.get("/auth/logout", AuthenticationController.logout);
 
 api.get("/users", UserManagementController.index);
 api.patch("/users", VerifyToken, RolePermission("superadmin"), UserManagementController.update);
