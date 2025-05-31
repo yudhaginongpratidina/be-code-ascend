@@ -48,7 +48,7 @@ export default class AuthenticationController {
 
             res.status(200).json({
                 message: "user logged in successfully",
-                data: { 
+                data: {
                     token: access_token
                 }
             });
@@ -59,10 +59,8 @@ export default class AuthenticationController {
 
     static async refresh_token(req, res, next) {
         try {
-            const refresh_token = req.cookies.refresh_token;
-            if (!refresh_token) return res.sendStatus(401);
-
-            const decoded = jwt.verify(refresh_token, process.env.REFRESH_TOKEN_SECRET);
+            const authHeader = req.headers['authorization'];
+            const decoded = authHeader && authHeader.split(' ')[1];
             if (!decoded) return res.sendStatus(403);
 
             const id = decoded.id;
