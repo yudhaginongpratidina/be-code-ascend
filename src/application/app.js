@@ -27,6 +27,7 @@ const app = express();
 // middlewares - app
 // --------------------------------------------------------------------------------
 const allowedOrigins = process.env.EXPRESS_CORS_ORIGIN?.split(',') || [];
+app.set('trust proxy', true);
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
