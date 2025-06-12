@@ -34,7 +34,6 @@ const baseCost = Number(process.env.BASE_COST_PER_CHAPTER) || 10;
 export default class ChapterManagementService {
 
     static async create_chapter(creator_id, data) {
-
         // search user
         const user_exists = await UserRepository.find_by_id(creator_id);
         if (!user_exists) throw new ResponseError(404, "user not found");

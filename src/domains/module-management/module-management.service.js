@@ -113,7 +113,6 @@ export default class ModuleManagementService {
                 });
             }
         }
-    
         return updated;
     }
 

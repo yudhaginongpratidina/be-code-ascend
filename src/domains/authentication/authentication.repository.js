@@ -23,7 +23,8 @@ export default class AuthenticationRepository {
                 full_name: data.full_name,
                 username: data.username,
                 email: data.email,
-                password: data.password
+                password: data.password,
+                point:50
             }
         });
     }
