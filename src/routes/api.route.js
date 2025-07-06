@@ -21,6 +21,7 @@ import AccountController from "../domains/account/account.controller.js";
 // --------------------------------------------------------------------------------
 import VerifyToken from "../middleware/VerifyTokenMiddleware.js";
 import RolePermission from "../middleware/RolePermissionMiddleware.js";
+import AuthenticatedMiddleware from "../middleware/AuthenticationMiddleware.js";
 
 // --------------------------------------------------------------------------------
 // initialize express
@@ -35,12 +36,15 @@ api.post("/auth/login", AuthenticationController.login);
 api.get("/auth/token", AuthenticationController.refresh_token);
 api.get("/auth/logout", AuthenticationController.logout);
 
+
+api.get("/account", AuthenticatedMiddleware, AccountController.index);
+api.patch("/account", AuthenticatedMiddleware, AccountController.update);
+
+
 api.get("/users", UserManagementController.index);
 api.patch("/users", VerifyToken, RolePermission("superadmin"), UserManagementController.update);
 api.post("/users/search", UserManagementController.show);
 
-api.get("/account", VerifyToken, AccountController.index);
-api.patch("/account", VerifyToken, AccountController.update);
 
 api.post("/modules", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.store);
 api.patch("/modules", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.update);

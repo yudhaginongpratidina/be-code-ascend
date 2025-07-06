@@ -158,6 +158,7 @@ export const refreshAccessToken = async (refreshToken) => {
         // Get fresh user data (you might want to fetch from database)
         const userPayload = {
             id: decoded.id,
+            role: decoded.role
         };
         
         // Generate new access token only
