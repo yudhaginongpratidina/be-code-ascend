@@ -46,11 +46,12 @@ api.patch("/users", AuthenticatedMiddleware, RolePermission("superadmin"), UserM
 api.post("/users/search", UserManagementController.show);
 
 
-api.post("/modules", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.store);
-api.patch("/modules", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.update);
-api.patch("/modules/:id", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.restore);
-api.delete("/modules/:id", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.destroy);
+api.post("/modules", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.store);
+api.patch("/modules", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.update);
+api.patch("/modules/:id", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.restore);
+api.delete("/modules/:id", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.destroy);
 api.post("/modules/search", ModuleManagementController.index);
+
 
 api.post("/chapters", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.store);
 api.patch("/chapters", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.update);

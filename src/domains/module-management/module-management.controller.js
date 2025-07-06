@@ -1,8 +1,8 @@
 import ModuleManagementValidation from "./module-management.validation.js";
 import ModuleManagementService from "./module-management.service.js";
+import { decodeToken } from "../../utils/JsonWebToken.js";
 import Validation from "../../utils/Validation.js";
 import FormatDate from "../../utils/FormatDate.js";
-import jwt from "jsonwebtoken";
 
 export default class ModuleManagementController {
     static async index(req, res, next) {
@@ -99,7 +99,7 @@ export default class ModuleManagementController {
                 const token = authHeader && authHeader.split(' ')[1];
                 if (!token) return res.status(401).json({ message: "user not logged in" });
 
-                const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+                const decoded = decodeToken(token);
                 const id = decoded.id;
 
                 const response = await ModuleManagementService.search_by("me", id);
@@ -148,10 +148,7 @@ export default class ModuleManagementController {
             }
 
             if (data.type === "search_member_by_module_id") {
-                // Tambahkan baris ini untuk mendapatkan response dari service
                 const response = await ModuleManagementService.search_by("member_by_module_id", data.value);
-
-                // Pastikan chapters ada dan array
                 const publishedChapters = Array.isArray(response.chapters)
                     ? response.chapters.filter(ch => ch.is_published && !ch.is_deleted)
                     : [];
@@ -186,7 +183,6 @@ export default class ModuleManagementController {
                                         id: ch.id,
                                         title: ch.title
                                     })),
-                                // total_published_chapters: totalPublishedChapters,
                                 completed_chapters_summary: `${completedChapterIds.length} of ${totalPublishedChapters} chapters`
                             };
                         }) : []
@@ -198,25 +194,13 @@ export default class ModuleManagementController {
         }
     }
 
-    static async create(req, res, next) {
-        try {
-            res.send("ModuleManagement create form");
-        } catch (e) {
-            next(e);
-        }
-    }
-
     static async store(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const id = decoded.id;
-
             const data = await Validation.validate(ModuleManagementValidation.CREATE, req.body);
-            data.creator_id = id;
+            data.creator_id = token.id;
 
             const response = await ModuleManagementService.create(data);
             res.status(201).json({
@@ -235,34 +219,14 @@ export default class ModuleManagementController {
         }
     }
 
-    static async show(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`ModuleManagement show ${id}`);
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    static async edit(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`ModuleManagement edit ${id}`);
-        } catch (e) {
-            next(e);
-        }
-    }
-
     static async update(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const creator_id = decoded.id;
-
+            const creator_id = token.id;
             const data = await Validation.validate(ModuleManagementValidation.UPDATE, req.body);
+
             const response = await ModuleManagementService.update(creator_id, data);
             res.status(200).json({
                 message: "module updated successfully",
@@ -284,15 +248,12 @@ export default class ModuleManagementController {
 
     static async restore(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
-            if (!token) return res.status(401).json({ message: "user not logged in" });
-
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const creator_id = decoded.id;
-
+            const token = req.token
             const { id } = req.params;
+
+            const creator_id = token.id;
             const response = await ModuleManagementService.restore(creator_id, id);
+            
             res.status(200).json({
                 message: "module restored successfully",
                 data: {
@@ -313,12 +274,8 @@ export default class ModuleManagementController {
 
     static async destroy(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
-            if (!token) return res.status(401).json({ message: "user not logged in" });
-
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const creator_id = decoded.id;
+            const token = req.token
+            const creator_id = token.id;
 
             const { id } = req.params;
             const response = await ModuleManagementService.delete(creator_id, id);
