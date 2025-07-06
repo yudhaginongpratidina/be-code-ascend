@@ -1,5 +1,6 @@
 import AuthenticationRepository from "./authentication.repository.js";
 import ResponseError from "../../utils/ResponseError.js";
+import { generateToken, refreshAccessToken } from "../../utils/JsonWebToken.js";
 import bcrypt from "bcrypt";
 
 export default class AuthenticationService {
@@ -26,7 +27,13 @@ export default class AuthenticationService {
         const passwordMatch = await bcrypt.compare(data.password, user.password);
         if (!passwordMatch) throw new ResponseError(401, "wrong password");
 
-        return user;
+        const user_payload = {
+            id: user.id,
+            role: user.role,
+        }
+
+        const response = await generateToken(user_payload);
+        return response;
     }
 
     static async login_with_username(data) {
@@ -38,7 +45,19 @@ export default class AuthenticationService {
         const passwordMatch = await bcrypt.compare(data.password, user.password);
         if (!passwordMatch) throw new ResponseError(401, "wrong password");
 
-        return user;
+        const user_payload = {
+            id: user.id,
+            role: user.role,
+        }
+
+        const response = await generateToken(user_payload);
+        return response;
+    }
+
+    static async refresh_token(refreshToken) {
+        const token = await refreshAccessToken(refreshToken);
+        const response = token.access_token;
+        return response;
     }
 
 
