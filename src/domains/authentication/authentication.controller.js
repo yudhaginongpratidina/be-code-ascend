@@ -3,6 +3,7 @@ import AuthenticationService from "./authentication.service.js";
 import Validation from "../../utils/Validation.js";
 import FormatDate from "../../utils/FormatDate.js";
 import ResponseError from "../../utils/ResponseError.js";
+import { decodeToken } from "../../utils/JsonWebToken.js";
 
 export default class AuthenticationController {
 
@@ -40,6 +41,9 @@ export default class AuthenticationController {
             const access_token = response.access_token;
             const refresh_token = response.refresh_token;
 
+            const decoded = await decodeToken(access_token, 'access');
+            const role = decoded.role;
+
 
             const cookieOptions = {
                 httpOnly: true,
@@ -54,6 +58,7 @@ export default class AuthenticationController {
 
             res.cookie('refresh_token', refresh_token, cookieOptions);
             res.cookie('authenticated', true, cookieOptions);
+            res.cookie('role', role, cookieOptions);
             return res.status(200).json({ message: 'user logged in successfully', token: access_token });
         } catch (e) {
             next(e);
