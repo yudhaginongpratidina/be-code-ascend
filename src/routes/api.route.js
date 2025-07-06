@@ -65,12 +65,11 @@ api.get("/enrollments/:id", AuthenticatedMiddleware, EnrollmentManagementControl
 api.post("/enrollments", AuthenticatedMiddleware, EnrollmentManagementController.store);
 
 
+api.post("/chapter-progress", AuthenticatedMiddleware, ChapterProgressController.store);
+api.post("/chapter-progress/find-chapters", AuthenticatedMiddleware, ChapterProgressController.findChapterByModuleIsCompleted);
+api.post("/quiz-attempt", AuthenticatedMiddleware, QuizAttemptController.store);
+api.post("/quiz-attempt/find", AuthenticatedMiddleware, QuizAttemptController.findAttemptQuiz);
 
-api.post("/quiz-attempt", VerifyToken, QuizAttemptController.store);
-api.post("/quiz-attempt/find", VerifyToken, QuizAttemptController.findAttemptQuiz);
-
-api.post("/chapter-progress", VerifyToken, ChapterProgressController.store);
-api.post("/chapter-progress/find-chapters", VerifyToken, ChapterProgressController.findChapterByModuleIsCompleted);
 
 api.post("/leaderboard", VerifyToken, LeaderboardController.index);
 

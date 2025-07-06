@@ -59,9 +59,9 @@ describe("QuizAttemptController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("01.02 - create module", async () => {
@@ -144,9 +144,9 @@ describe("QuizAttemptController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("02.02 - enroll module", async () => {
