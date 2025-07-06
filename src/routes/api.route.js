@@ -19,7 +19,6 @@ import AccountController from "../domains/account/account.controller.js";
 // --------------------------------------------------------------------------------
 // middlewares
 // --------------------------------------------------------------------------------
-import VerifyToken from "../middleware/VerifyTokenMiddleware.js";
 import RolePermission from "../middleware/RolePermissionMiddleware.js";
 import AuthenticatedMiddleware from "../middleware/AuthenticationMiddleware.js";
 
@@ -71,7 +70,7 @@ api.post("/quiz-attempt", AuthenticatedMiddleware, QuizAttemptController.store);
 api.post("/quiz-attempt/find", AuthenticatedMiddleware, QuizAttemptController.findAttemptQuiz);
 
 
-api.post("/leaderboard", VerifyToken, LeaderboardController.index);
+api.post("/leaderboard", AuthenticatedMiddleware, LeaderboardController.index);
 
 // --------------------------------------------------------------------------------
 // export default
