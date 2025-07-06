@@ -169,6 +169,7 @@ export default class ChapterManagementService {
             if (!chapter) throw new ResponseError(404, "chapter not found");
 
             // cek apakah user adalah pemilik chapter
+            console.log(chapter.creator_id, creator_id)
             if (chapter.creator_id !== creator_id) throw new ResponseError(401, "You're not the creator of this chapter");
             return chapter
         }

@@ -53,11 +53,13 @@ api.delete("/modules/:id", AuthenticatedMiddleware, RolePermission(["contributor
 api.post("/modules/search", ModuleManagementController.index);
 
 
-api.post("/chapters", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.store);
-api.patch("/chapters", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.update);
-api.patch("/chapters/:id", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.restore);
-api.delete("/chapters/:id", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.destroy);
+api.post("/chapters", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.store);
+api.patch("/chapters", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.update);
+api.patch("/chapters/:id", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.restore);
+api.delete("/chapters/:id", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.destroy);
 api.post("/chapters/search", ChapterManagementController.index);
+
+
 
 api.get("/enrollments", VerifyToken, EnrollmentManagementController.index);
 api.get("/enrollments/:id", VerifyToken, EnrollmentManagementController.show);
