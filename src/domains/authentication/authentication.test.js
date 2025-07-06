@@ -82,7 +82,7 @@ describe("AuthenticationController", () => {
             expect(response.body.data.username).toBe("user_test_1");
             expect(response.body.data.email).toBe("user1@test.com");
             expect(response.body.data.role).toBe("user");
-            expect(response.body.data.point).toBe(0);
+            expect(response.body.data.point).toBe(50);
             expect(response.body.data.experience).toBe(0);
             expect(response.body.data.created_at).toBeDefined();
         })

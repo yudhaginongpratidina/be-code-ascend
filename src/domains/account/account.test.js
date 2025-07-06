@@ -32,7 +32,7 @@ describe("AccountController", () => {
     let token = "";
 
 
-    describe("test get account", () => {
+    describe("test get account (profile)", () => {
         it("should return a 200 status code when get account successfully (status user is logged in)", async () => {
             const login = await request(api).post('/auth/login').send({
                 type: "login_with_email",

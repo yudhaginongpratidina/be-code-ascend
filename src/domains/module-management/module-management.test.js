@@ -193,7 +193,7 @@ describe("ModuleManagementController", () => {
             token = login.body.data.token;
         });
 
-        it("should return a 200 status code when update module successfully", async () => {
+        it("should return a 403 status code when update module successfully", async () => {
             const response = await request(api).patch(`/modules`)
                 .set("Authorization", `Bearer ${token}`)
                 .send({

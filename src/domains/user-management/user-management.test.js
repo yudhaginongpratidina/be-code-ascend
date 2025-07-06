@@ -131,7 +131,7 @@ describe("UserManagementController", () => {
             expect(response.body.message).toBe("user not found");
         })
 
-        it("should return a 200 status code when search user not found (search by id)", async () => {
+        it("should return a 200 status code when search user found (search by id)", async () => {
             const response = await request(api).post(`/users/search`).send({
                 type: "search_by_id",
                 id: search_user_by_id
@@ -140,7 +140,7 @@ describe("UserManagementController", () => {
             expect(response.body.message).toBe("Successfully obtained user data");
         })
 
-        it("should return a 200 status code when search user not found (search by username)", async () => {
+        it("should return a 200 status code when search user found (search by username)", async () => {
             const response = await request(api).post(`/users/search`).send({
                 type: "search_by_username",
                 username: search_user_by_username
@@ -158,7 +158,7 @@ describe("UserManagementController", () => {
             expect(response.status).toBe(403);
         })
 
-        it("should return a 200 status code when update user successfully", async () => {
+        it("should return a 403 status code when update user but user is not superadmin", async () => {
             const response = await request(api).patch(`/users`)
                 .set('Authorization', `Bearer ${token}`)
                 .send({
