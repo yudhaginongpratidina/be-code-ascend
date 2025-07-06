@@ -60,10 +60,11 @@ api.delete("/chapters/:id", AuthenticatedMiddleware, RolePermission(["contributo
 api.post("/chapters/search", ChapterManagementController.index);
 
 
+api.get("/enrollments", AuthenticatedMiddleware, EnrollmentManagementController.index);
+api.get("/enrollments/:id", AuthenticatedMiddleware, EnrollmentManagementController.show);
+api.post("/enrollments", AuthenticatedMiddleware, EnrollmentManagementController.store);
 
-api.get("/enrollments", VerifyToken, EnrollmentManagementController.index);
-api.get("/enrollments/:id", VerifyToken, EnrollmentManagementController.show);
-api.post("/enrollments", VerifyToken, EnrollmentManagementController.store);
+
 
 api.post("/quiz-attempt", VerifyToken, QuizAttemptController.store);
 api.post("/quiz-attempt/find", VerifyToken, QuizAttemptController.findAttemptQuiz);

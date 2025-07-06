@@ -66,9 +66,9 @@ describe("EnrollmentManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("scenario 02 - should return a 201 status code when create new module successfully", async () => {
@@ -116,9 +116,9 @@ describe("EnrollmentManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("scenario 02 - should return a 200 status code when search all module successfully", async () => {
@@ -180,9 +180,9 @@ describe("EnrollmentManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("scenario 02 - should return a 201 status code when create new module successfully", async () => {
@@ -246,9 +246,9 @@ describe("EnrollmentManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("scenario 02 - should return a 201 status code when enroll module successfully", async () => {
@@ -272,9 +272,9 @@ describe("EnrollmentManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("scenario 02 - should return a 400 status code when enroll module failed but point not fulfilled", async () => {
@@ -297,9 +297,9 @@ describe("EnrollmentManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("scenario 02 - should return a 200 status code when get list module enrolled successfully", async () => {
@@ -319,9 +319,9 @@ describe("EnrollmentManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("scenario 02 - should return a 200 status code when get detail module successfully", async () => {
