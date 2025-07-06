@@ -42,7 +42,7 @@ api.patch("/account", AuthenticatedMiddleware, AccountController.update);
 
 
 api.get("/users", UserManagementController.index);
-api.patch("/users", VerifyToken, RolePermission("superadmin"), UserManagementController.update);
+api.patch("/users", AuthenticatedMiddleware, RolePermission("superadmin"), UserManagementController.update);
 api.post("/users/search", UserManagementController.show);
 
 
