@@ -9,7 +9,7 @@ pnpm install
 pnpm run dev
 ```
 
-## RUNNING WITH DOCKER
+## RUNNING WITH DOCKER (LOCAL FROM SCRATCH)
 
 ```bash
 git clone https://github.com/yudhaginongpratidina/be-code-ascend.git
@@ -34,6 +34,30 @@ docker run -d --name be-code-ascend -p 4000:4000 \
   -e MULTIPLITER_ADVANCED=3 \
   express/be-code-ascend:latest
 ````
+
+## RUNNING WITH DOCKER (DOCKER HUB)
+
+```bash
+docker pull devyudhaginongpratidina140/be-code-ascend:latest
+
+docker run -d --name be-code-ascend -p 4000:4000 \
+  -e NODE_ENV= \
+  -e EXPRESS_PORT= \
+  -e EXPRESS_TEST= \
+  -e EXPRESS_CORS_ORIGIN= \
+  -e EXPRESS_DOMAIN= \
+  -e DATABASE_URL= \
+  -e JWT_ACCESS_TOKEN_SECRET= \
+  -e JWT_REFRESH_TOKEN_SECRET= \
+  -e JWT_ISSUER= \
+  -e JWT_AUDIENCE= \
+  -e EARN_POINT_BASE_POINT=10 \
+  -e EARN_POINT_BASE_XP=5 \
+  -e MULTIPLITER_BEGINNER=1 \
+  -e MULTIPLITER_INTERMEDIATE=2 \
+  -e MULTIPLITER_ADVANCED=3 \
+  devyudhaginongpratidina140/be-code-ascend:latest
+```
 
 ## ENVIRONMENT
 
