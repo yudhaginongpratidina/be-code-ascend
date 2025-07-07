@@ -31,6 +31,8 @@ describe("AuthenticationController", () => {
         await prismaClient.$disconnect();
     });
 
+    let cookies = "";
+
     describe("test register", () => {
 
         it("should return a 400 status code if fields are empty", async () => {
@@ -141,9 +143,12 @@ describe("AuthenticationController", () => {
                 email: "user1@test.com",
                 password: "user1@test.com"
             });
+
+            cookies = response.headers["set-cookie"];
+
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("user logged in successfully");
-            expect(response.body.data.token).toBeDefined();
+            expect(response.body.token).toBeDefined();
         })
 
         it("should return a 200 status code if user login with username", async () => {
@@ -152,9 +157,13 @@ describe("AuthenticationController", () => {
                 username: "user_test_1",
                 password: "user1@test.com"
             });
+
+            cookies = response.headers["set-cookie"];
+
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("user logged in successfully");
-            expect(response.body.data.token).toBeDefined();
+            expect(response.body.token).toBeDefined();
+
         })
 
         it("should return a 401 status code if password is wrong when user login with username", async () => {
@@ -198,43 +207,41 @@ describe("AuthenticationController", () => {
         })
     });
 
-    // describe("test get redresh token", () => {
-    //     it("should refresh token successfully", async () => {
-    //         const loginResponse = await request(api).post("/auth/login").send({
-    //             type: "login_with_username",
-    //             username: "user_test_1",
-    //             password: "user1@test.com"
-    //         });
-    //         const cookies = loginResponse.headers["set-cookie"];
-    //         const response = await request(api).get("/auth/token").set("Cookie", cookies);
-    //         expect(response.status).toBe(200);
-    //         expect(response.body.message).toBe("Token refreshed successfully");
-    //         expect(response.body.data.token).toBeDefined();
-    //     });
+    describe("test get refresh token", () => {
+        it("should refresh token successfully", async () => {
+            const loginResponse = await request(api).post("/auth/login").send({
+                type: "login_with_username",
+                username: "user_test_1",
+                password: "user1@test.com"
+            });
 
-    //     it("should return 401 if no refresh token is provided", async () => {
-    //         const response = await request(api).get("/auth/token");
-    //         expect(response.status).toBe(401);
-    //     });
-    // });
+            cookies = loginResponse.headers["set-cookie"];
 
-    // describe("test logout", () => {
-    //     it("should return a 200 status code if user login successfully", async () => {
-    //         const loginResponse = await request(api).post("/auth/login").send({
-    //             type: "login_with_username",
-    //             username: "user_test_1",
-    //             password: "user1@test.com"
-    //         });
-    //         const cookies = loginResponse.headers["set-cookie"];
-    //         const response = await request(api).get("/auth/logout").set("Cookie", cookies);
-    //         expect(response.status).toBe(200);
-    //         expect(response.body.message).toBe("Logout success");
-    //     });
+            const response = await request(api).get("/auth/token").set("Cookie", cookies);
+            expect(response.status).toBe(200);
+            expect(response.body.message).toBe("Token refreshed successfully");
+            expect(response.body.token).toBeDefined();
+        });
+    });
 
-    //     it("should return 401 if user is not logged in", async () => {
-    //         const response = await request(api).get("/auth/logout");
-    //         expect(response.status).toBe(401);
-    //         expect(response.body.message).toBe("user not logged in");
-    //     });
-    // });
+    describe("test logout", () => {
+        it("should return a 200 status code if user login successfully", async () => {
+            const loginResponse = await request(api).post("/auth/login").send({
+                type: "login_with_username",
+                username: "user_test_1",
+                password: "user1@test.com"
+            });
+            
+            cookies = loginResponse.headers["set-cookie"];
+            const response = await request(api).get("/auth/logout").set("Cookie", cookies);
+            expect(response.status).toBe(200);
+            expect(response.body.message).toBe("Logout success");
+        });
+
+        it("should return 401 if user is not logged in", async () => {
+            const response = await request(api).get("/auth/logout");
+            expect(response.status).toBe(401);
+            expect(response.body.message).toBe("user not logged in");
+        });
+    });
 });

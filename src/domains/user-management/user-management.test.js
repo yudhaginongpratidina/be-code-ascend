@@ -78,9 +78,9 @@ describe("UserManagementController", () => {
             });
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("user logged in successfully");
-            expect(response.body.data.token).toBeDefined();
+            expect(response.body.token).toBeDefined();
 
-            token = response.body.data.token;
+            token = response.body.token;
         })
     });
 
@@ -179,9 +179,9 @@ describe("UserManagementController", () => {
             });
             expect(response.status).toBe(200);
             expect(response.body.message).toBe("user logged in successfully");
-            expect(response.body.data.token).toBeDefined();
+            expect(response.body.token).toBeDefined();
 
-            token = response.body.data.token;
+            token = response.body.token;
         })
 
         it("should return a 400 status code when update user but type is not defined", async () => {

@@ -2,7 +2,8 @@ import AuthenticationValidation from "./authentication.validation.js";
 import AuthenticationService from "./authentication.service.js";
 import Validation from "../../utils/Validation.js";
 import FormatDate from "../../utils/FormatDate.js";
-import jwt from "jsonwebtoken";
+import ResponseError from "../../utils/ResponseError.js";
+import { decodeToken } from "../../utils/JsonWebToken.js";
 
 export default class AuthenticationController {
 
@@ -31,28 +32,34 @@ export default class AuthenticationController {
     static async login(req, res, next) {
         try {
             const data = await Validation.validate(AuthenticationValidation.LOGIN, req.body);
-
             const loginMethodMap = {
                 login_with_username: AuthenticationService.login_with_username,
                 login_with_email: AuthenticationService.login_with_email,
             };
 
             const response = await loginMethodMap[data.type](data);
+            const access_token = response.access_token;
+            const refresh_token = response.refresh_token;
 
-            const id = response.id;
-            const username = response.username;
-            const role = response.role;
+            const decoded = await decodeToken(access_token, 'access');
+            const role = decoded.role;
 
-            const access_token = jwt.sign(
-                { id, role, username },
-                process.env.ACCESS_TOKEN_SECRET,
-                { expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
-            );
 
-            res.status(200).json({
-                message: "user logged in successfully",
-                data: { token: access_token }
-            });
+            const cookieOptions = {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                path: '/',
+            };
+
+            if (process.env.NODE_ENV === 'production' && process.env.EXPRESS_DOMAIN) {
+                cookieOptions.domain = process.env.EXPRESS_DOMAIN;
+            }
+
+            res.cookie('refresh_token', refresh_token, cookieOptions);
+            res.cookie('authenticated', true, cookieOptions);
+            res.cookie('role', role, cookieOptions);
+            return res.status(200).json({ message: 'user logged in successfully', token: access_token });
         } catch (e) {
             next(e);
         }
@@ -60,23 +67,14 @@ export default class AuthenticationController {
 
     static async refresh_token(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const decoded = authHeader && authHeader.split(' ')[1];
-            if (!decoded) return res.sendStatus(403);
+            const authenticated = req.cookies.authenticated;
+            const refresh_token = req.cookies.refresh_token;
 
-            const id = decoded.id;
-            const username = decoded.username;
-            const role = decoded.role;
-            const access_token = jwt.sign(
-                { id, role, username },
-                process.env.REFRESH_TOKEN_SECRET,
-                { expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN }
-            );
+            if (!authenticated) { throw new ResponseError(401, 'unauthenticated') }
+            if (!refresh_token) { throw new ResponseError(401, 'refresh token required') }
 
-            res.status(200).json({
-                message: "Token refreshed successfully",
-                data: { token: access_token }
-            });
+            const response = await AuthenticationService.refresh_token(refresh_token);
+            return res.status(200).json({ message: 'Token refreshed successfully', token: response });
         } catch (error) {
             next(error);
         }
@@ -84,9 +82,25 @@ export default class AuthenticationController {
 
     static async logout(req, res, next) {
         try {
-            if (!req.cookies.refresh_token) return res.status(401).json({ message: "user not logged in" });
-            res.clearCookie('refresh_token', { maxAge: 0 });
-            res.status(200).json({ message: 'Logout success' });
+            const authenticated = req.cookies.authenticated;
+            if (!authenticated) { throw new ResponseError(401, 'user not logged in') }
+
+            const cookieOptions = {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'lax',
+                path: '/',
+            };
+
+            if (process.env.NODE_ENV === 'production' && process.env.EXPRESS_DOMAIN) {
+                cookieOptions.domain = process.env.EXPRESS_DOMAIN;
+            }
+
+            res.clearCookie('refresh_token', cookieOptions);
+            res.clearCookie('authenticated', cookieOptions);
+            res.clearCookie('role', cookieOptions);
+
+            res.json({ message: 'Logout success' });
         } catch (error) {
             next(error);
         }

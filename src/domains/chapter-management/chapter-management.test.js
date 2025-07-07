@@ -33,7 +33,7 @@ describe("ChapterManagementController", () => {
     let module_id = "";
     let chapter_id = "";
 
-    describe("test create new cahpter (access only contributor, admin and superadmin", () => {
+    describe("test create new chapter (access only contributor, admin and superadmin", () => {
         it("should return a 200 status code when login", async () => {
             const login = await request(api).post('/auth/login').send({
                 type: "login_with_email",
@@ -42,9 +42,9 @@ describe("ChapterManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("should return a 201 status code when create new module successfully", async () => {
@@ -179,6 +179,19 @@ describe("ChapterManagementController", () => {
     });
 
     describe("test search chapters", () => {
+        it("should return a 200 status code when login", async () => {
+            const login = await request(api).post('/auth/login').send({
+                type: "login_with_email",
+                email: "user@superadmin.com",
+                password: "user@superadmin.com"
+            });
+            expect(login.status).toBe(200);
+            expect(login.body.message).toBe("user logged in successfully");
+            expect(login.body.token).toBeDefined();
+
+            token = login.body.token;
+        });
+
         it("should return a 200 status code when search chapters by module_id", async () => {
             const response = await request(api).post('/chapters/search').send({
                 type: "search_by_module_id",

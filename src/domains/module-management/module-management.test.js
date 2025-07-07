@@ -62,9 +62,9 @@ describe("ModuleManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("should return a 201 status code when create new module successfully", async () => {
@@ -122,10 +122,10 @@ describe("ModuleManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("should return a 403 status code when create new module successfully but user role not access", async () => {
@@ -149,9 +149,9 @@ describe("ModuleManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("should return a 200 status code when update module successfully", async () => {
@@ -188,9 +188,9 @@ describe("ModuleManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("should return a 403 status code when update module successfully", async () => {
@@ -265,9 +265,7 @@ describe("ModuleManagementController", () => {
         it("should return a 200 status code when search by me module successfully", async () => {
             const response = await request(api).post('/modules/search')
                 .set("Authorization", `Bearer ${token}`)
-                .send({
-                    type: "search_by_me"
-                })
+                .send({ type: "search_by_me" })
             expect(response.status).toBe(200);
         });
     })
@@ -281,9 +279,9 @@ describe("ModuleManagementController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("should return a 200 status code when delete module successfully", async () => {

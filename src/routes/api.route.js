@@ -19,8 +19,8 @@ import AccountController from "../domains/account/account.controller.js";
 // --------------------------------------------------------------------------------
 // middlewares
 // --------------------------------------------------------------------------------
-import VerifyToken from "../middleware/VerifyTokenMiddleware.js";
 import RolePermission from "../middleware/RolePermissionMiddleware.js";
+import AuthenticatedMiddleware from "../middleware/AuthenticationMiddleware.js";
 
 // --------------------------------------------------------------------------------
 // initialize express
@@ -33,38 +33,44 @@ const api = express.Router();
 api.post("/auth/register", AuthenticationController.register);
 api.post("/auth/login", AuthenticationController.login);
 api.get("/auth/token", AuthenticationController.refresh_token);
-// api.get("/auth/logout", AuthenticationController.logout);
+api.get("/auth/logout", AuthenticationController.logout);
+
+
+api.get("/account", AuthenticatedMiddleware, AccountController.index);
+api.patch("/account", AuthenticatedMiddleware, AccountController.update);
+
 
 api.get("/users", UserManagementController.index);
-api.patch("/users", VerifyToken, RolePermission("superadmin"), UserManagementController.update);
+api.patch("/users", AuthenticatedMiddleware, RolePermission("superadmin"), UserManagementController.update);
 api.post("/users/search", UserManagementController.show);
 
-api.get("/account", VerifyToken, AccountController.index);
-api.patch("/account", VerifyToken, AccountController.update);
 
-api.post("/modules", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.store);
-api.patch("/modules", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.update);
-api.patch("/modules/:id", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.restore);
-api.delete("/modules/:id", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.destroy);
+api.post("/modules", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.store);
+api.patch("/modules", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.update);
+api.patch("/modules/:id", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.restore);
+api.delete("/modules/:id", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ModuleManagementController.destroy);
 api.post("/modules/search", ModuleManagementController.index);
 
-api.post("/chapters", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.store);
-api.patch("/chapters", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.update);
-api.patch("/chapters/:id", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.restore);
-api.delete("/chapters/:id", VerifyToken, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.destroy);
+
+api.post("/chapters", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.store);
+api.patch("/chapters", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.update);
+api.patch("/chapters/:id", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.restore);
+api.delete("/chapters/:id", AuthenticatedMiddleware, RolePermission(["contributor", "admin", "superadmin"]), ChapterManagementController.destroy);
 api.post("/chapters/search", ChapterManagementController.index);
 
-api.get("/enrollments", VerifyToken, EnrollmentManagementController.index);
-api.get("/enrollments/:id", VerifyToken, EnrollmentManagementController.show);
-api.post("/enrollments", VerifyToken, EnrollmentManagementController.store);
 
-api.post("/quiz-attempt", VerifyToken, QuizAttemptController.store);
-api.post("/quiz-attempt/find", VerifyToken, QuizAttemptController.findAttemptQuiz);
+api.get("/enrollments", AuthenticatedMiddleware, EnrollmentManagementController.index);
+api.get("/enrollments/:id", AuthenticatedMiddleware, EnrollmentManagementController.show);
+api.post("/enrollments", AuthenticatedMiddleware, EnrollmentManagementController.store);
 
-api.post("/chapter-progress", VerifyToken, ChapterProgressController.store);
-api.post("/chapter-progress/find-chapters", VerifyToken, ChapterProgressController.findChapterByModuleIsCompleted);
 
-api.post("/leaderboard", VerifyToken, LeaderboardController.index);
+api.post("/chapter-progress", AuthenticatedMiddleware, ChapterProgressController.store);
+api.post("/chapter-progress/find-chapters", AuthenticatedMiddleware, ChapterProgressController.findChapterByModuleIsCompleted);
+api.post("/quiz-attempt", AuthenticatedMiddleware, QuizAttemptController.store);
+api.post("/quiz-attempt/find", AuthenticatedMiddleware, QuizAttemptController.findAttemptQuiz);
+
+
+api.post("/leaderboard", AuthenticatedMiddleware, LeaderboardController.index);
 
 // --------------------------------------------------------------------------------
 // export default

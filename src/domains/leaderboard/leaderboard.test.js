@@ -62,9 +62,9 @@ describe("LeaderboardController", () => {
             });
             expect(login.status).toBe(200);
             expect(login.body.message).toBe("user logged in successfully");
-            expect(login.body.data.token).toBeDefined();
+            expect(login.body.token).toBeDefined();
 
-            token = login.body.data.token;
+            token = login.body.token;
         });
 
         it("should return leaderboard", async () => {
@@ -81,7 +81,6 @@ describe("LeaderboardController", () => {
                 .send({ type: "search_by_me" });
             expect(response.status).toBe(200);
         });
-
 
     });
 });

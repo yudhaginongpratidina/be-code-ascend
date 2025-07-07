@@ -7,12 +7,9 @@ import jwt from "jsonwebtoken";
 export default class AccountController {
     static async index(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token;
             if (!token) return res.status(401).json({ message: "user not logged in" });
-
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const id = decoded.id;
+            const id = token.id;
 
             const getUserLevel = (experience) => {
                 if (experience >= 10000) return "Master";
@@ -45,48 +42,13 @@ export default class AccountController {
         }
     }
 
-    static async create(req, res, next) {
-        try {
-            res.send("Account create form");
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    static async store(req, res, next) {
-        try {
-            res.send("Account stored");
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    static async show(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`Account show ${id}`);
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    static async edit(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`Account edit ${id}`);
-        } catch (e) {
-            next(e);
-        }
-    }
 
     static async update(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token;
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const id = decoded.id;
+            const id = token.id;
             const data = await Validation.validate(AccountValidation.UPDATE, req.body);
 
             if (data.type === "update_detail_information") {
@@ -123,15 +85,6 @@ export default class AccountController {
                     }
                 });
             }
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    static async destroy(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`Account deleted ${id}`);
         } catch (e) {
             next(e);
         }

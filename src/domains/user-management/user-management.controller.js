@@ -41,22 +41,6 @@ export default class UserManagementController {
         }
     }
 
-    static async create(req, res, next) {
-        try {
-            res.send("UserManagement create form");
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    static async store(req, res, next) {
-        try {
-            res.send("UserManagement stored");
-        } catch (e) {
-            next(e);
-        }
-    }
-
     static async show(req, res, next) {
         try {
             const data = await Validation.validate(UserManagementValidation.SEARCH, req.body);
@@ -94,15 +78,6 @@ export default class UserManagementController {
     }
     
 
-    static async edit(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`UserManagement edit ${id}`);
-        } catch (e) {
-            next(e);
-        }
-    }
-
     static async update(req, res, next) {
         try {
             const data = await Validation.validate(UserManagementValidation.UPDATE, req.body);
@@ -124,15 +99,6 @@ export default class UserManagementController {
                 });
             }
 
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    static async destroy(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`UserManagement deleted ${id}`);
         } catch (e) {
             next(e);
         }

@@ -1,24 +1,14 @@
-import jwt from 'jsonwebtoken';
-
 const RolePermissionMiddleware = (allowedRoles = []) => {
     return (req, res, next) => {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = req.token;
+        if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
-        if (!token) return res.sendStatus(401);
+        const userRole = token.role;
+        if (!allowedRoles.includes(userRole)) {
+            return res.status(403).json({ message: 'Forbidden: insufficient permissions' });
+        }
 
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-            if (err) return res.sendStatus(403);
-
-            req.id = decoded.id;
-            req.username = decoded.username;
-            req.roles = Array.isArray(decoded.role) ? decoded.role : [decoded.role];
-
-            const hasAccess = req.roles.some(role => allowedRoles.includes(role));
-            if (!hasAccess) return res.sendStatus(403);
-
-            next();
-        });
+        next();
     };
 };
 

@@ -1,5 +1,6 @@
 import ChapterManagementValidation from "./chapter-management.validation.js";
 import ChapterManagementService from "./chapter-management.service.js";
+import { decodeToken } from "../../utils/JsonWebToken.js";
 import Validation from "../../utils/Validation.js";
 import FormatDate from "../../utils/FormatDate.js";
 import jwt from "jsonwebtoken";
@@ -74,7 +75,7 @@ export default class ChapterManagementController {
                 const token = authHeader && authHeader.split(' ')[1];
                 if (!token) return res.status(401).json({ message: "user not logged in" });
 
-                const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+                const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
                 const creator_id = decoded.id;
 
                 const response = await ChapterManagementService.find_by("id_only_by_creator_id", data.value, creator_id);
@@ -89,7 +90,7 @@ export default class ChapterManagementController {
                 const token = authHeader && authHeader.split(' ')[1];
                 if (!token) return res.status(401).json({ message: "user not logged in" });
 
-                const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+                const decoded = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
                 const creator_id = decoded.id;
 
                 const response = await ChapterManagementService.find_by("module_id_only_by_creator_id", data.value, creator_id);
@@ -103,24 +104,15 @@ export default class ChapterManagementController {
         }
     }
 
-    static async create(req, res, next) {
-        try {
-            res.send("ChapterManagement create form");
-        } catch (e) {
-            next(e);
-        }
-    }
 
     static async store(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const creator_id = decoded.id;
-
+            const creator_id = token.id;
             const data = await Validation.validate(ChapterManagementValidation.CREATE, req.body);
+
             const response = await ChapterManagementService.create_chapter(creator_id, data);
             res.status(201).json({
                 message: "chapter created successfully",
@@ -147,34 +139,15 @@ export default class ChapterManagementController {
         }
     }
 
-    static async show(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`ChapterManagement show ${id}`);
-        } catch (e) {
-            next(e);
-        }
-    }
-
-    static async edit(req, res, next) {
-        try {
-            const { id } = req.params;
-            res.send(`ChapterManagement edit ${id}`);
-        } catch (e) {
-            next(e);
-        }
-    }
 
     static async update(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const creator_id = decoded.id;
-
+            const creator_id = token.id;
             const data = await Validation.validate(ChapterManagementValidation.UPDATE, req.body);
+
             const response = await ChapterManagementService.update_chapter_by_module_id(creator_id, data);
             res.status(200).json({
                 message: "chapter updated successfully",
@@ -203,14 +176,12 @@ export default class ChapterManagementController {
 
     static async destroy(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const creator_id = decoded.id;
-
+            const creator_id = token.id;
             const { id } = req.params;
+
             const response = await ChapterManagementService.soft_delete(creator_id, id);
             res.status(200).json({
                 message: "chapter deleted successfully",
@@ -229,14 +200,12 @@ export default class ChapterManagementController {
 
     static async restore(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token;
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const creator_id = decoded.id;
-
+            const creator_id = token.id;
             const { id } = req.params;
+
             const response = await ChapterManagementService.restore(creator_id, id);
             res.status(200).json({
                 message: "chapter restored successfully",

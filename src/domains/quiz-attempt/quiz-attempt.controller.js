@@ -7,14 +7,12 @@ export default class QuizAttemptController {
 
     static async findAttemptQuiz(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token;
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const user_id = decoded.id;
-
+            const user_id = token.id;
             const data = await Validation.validate(QuizAttemptValidation.FIND, req.body);
+
             const response = await QuizAttemptService.findAttemptQuiz(user_id, data.chapter_id);
             return res.status(200).json({
                 message: "success",
@@ -27,16 +25,13 @@ export default class QuizAttemptController {
 
     static async store(req, res, next) {
         try {
-            const authHeader = req.headers['authorization'];
-            const token = authHeader && authHeader.split(' ')[1];
+            const token = req.token;
             if (!token) return res.status(401).json({ message: "user not logged in" });
 
-            const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
-            const user_id = decoded.id;
-
+            const user_id = token.id;
             const data = await Validation.validate(QuizAttemptValidation.CREATE, req.body);
-            const response = await QuizAttemptService.attempt(user_id, data.module_id, data.chapter_id, data.answer);
 
+            const response = await QuizAttemptService.attempt(user_id, data.module_id, data.chapter_id, data.answer);
             res.status(201).json({
                 message: "That's the right answer—good work!",
                 data: response

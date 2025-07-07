@@ -1,5 +1,6 @@
 # BE CODE ASCEND
 
+## RUNNING LOCAL
 ```bash
 git clone https://github.com/yudhaginongpratidina/be-code-ascend.git
 cd be-code-ascend
@@ -8,16 +9,48 @@ pnpm install
 pnpm run dev
 ```
 
-or with docker
+## RUNNING WITH DOCKER
 
 ```bash
 git clone https://github.com/yudhaginongpratidina/be-code-ascend.git
 cd be-code-ascend
-docker build -t express/be-code-ascend:1.0.0 .
-docker run -d --name be-code-ascend -p 4000:4000 express/be-code-ascend:1.0.0
+
+docker build -t express/be-code-ascend:latest .
+docker run -d --name be-code-ascend -p 4000:4000 \
+  -e NODE_ENV= \
+  -e EXPRESS_PORT= \
+  -e EXPRESS_TEST= \
+  -e EXPRESS_CORS_ORIGIN= \
+  -e EXPRESS_DOMAIN= \
+  -e DATABASE_URL= \
+  -e JWT_ACCESS_TOKEN_SECRET= \
+  -e JWT_REFRESH_TOKEN_SECRET= \
+  -e JWT_ISSUER= \
+  -e JWT_AUDIENCE= \
+  -e EARN_POINT_BASE_POINT=10 \
+  -e EARN_POINT_BASE_XP=5 \
+  -e MULTIPLITER_BEGINNER=1 \
+  -e MULTIPLITER_INTERMEDIATE=2 \
+  -e MULTIPLITER_ADVANCED=3 \
+  express/be-code-ascend:latest
 ````
 
-## Note
+## ENVIRONMENT
 
-Jangan lupa atur environtment variable untuk nextjs terlebih dahulu
-sebelum menjalankan perintah di atas
+```
+NODE_ENV=
+EXPRESS_PORT=
+EXPRESS_TEST=
+EXPRESS_CORS_ORIGIN=
+EXPRESS_DOMAIN=
+DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+JWT_ACCESS_TOKEN_SECRET=
+JWT_REFRESH_TOKEN_SECRET=4
+JWT_ISSUER=
+JWT_AUDIENCE=
+EARN_POINT_BASE_POINT=10
+EARN_POINT_BASE_XP=5
+MULTIPLITER_BEGINNER=1
+MULTIPLITER_INTERMEDIATE=2
+MULTIPLITER_ADVANCED=3
+```
