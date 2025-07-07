@@ -98,6 +98,7 @@ export default class AuthenticationController {
 
             res.clearCookie('refresh_token', cookieOptions);
             res.clearCookie('authenticated', cookieOptions);
+            res.clearCookie('role', cookieOptions);
 
             res.json({ message: 'Logout success' });
         } catch (error) {
